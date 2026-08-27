@@ -21,6 +21,8 @@ package unlu.teoi.grupo5.lexer;
 %unicode
 %function yylex
 %type int
+/* JFlex 1.9: el esqueleto por defecto devuelve null en EOF y no compila con
+   %type int; se explicita YYEOF. No borrar este bloque al agregar reglas. */
 %eofval{
   return YYEOF;
 %eofval}

@@ -1,0 +1,4 @@
+# prueba.txt — archivo de pruebas generales (Entrega 1, 8/10/26)
+#
+# Debe incluir la prueba del tema especial del grupo: SUMAIMPAR.
+# TODO: reemplazar este contenido por las pruebas reales del TP.

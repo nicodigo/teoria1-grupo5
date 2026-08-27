@@ -1,0 +1,7 @@
+# ts.txt — tabla de símbolos (Entrega 1, 8/10/26)
+#
+# Formato esperado según consigna (columnas): NOMBRE | TOKEN | TIPO | VALOR | LONG
+# Ejemplo:
+#   a1     | ID      |        |       | -
+#   _hola  | CTE_STR |        | hola  | 4
+# TODO: reemplazar por la salida real del TP.

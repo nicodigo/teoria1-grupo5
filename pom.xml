@@ -18,6 +18,8 @@
 
     <!-- Versiones fijadas: ver docs/decisiones-tecnicas.md -->
     <jflex.version>1.9.1</jflex.version>
+    <cup.version>11b-20160615-1</cup.version>
+    <cup-plugin.version>2.3</cup-plugin.version>
     <junit.version>5.11.3</junit.version>
     <compiler-plugin.version>3.13.0</compiler-plugin.version>
     <surefire.version>3.5.2</surefire.version>
@@ -26,7 +28,14 @@
   </properties>
 
   <dependencies>
-    <!-- Única dependencia: JUnit 5. Swing viene con el JDK y el lexer generado no necesita runtime extra. -->
+    <!-- Runtime de JAVA CUP: lo usan el parser y el lexer generados (java_cup.runtime.*).
+         Swing viene con el JDK y el lexer generado por JFlex no necesita runtime extra. -->
+    <dependency>
+      <groupId>com.github.vbmacher</groupId>
+      <artifactId>java-cup-runtime</artifactId>
+      <version>${cup.version}</version>
+    </dependency>
+    <!-- Tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -55,7 +64,29 @@
         </executions>
       </plugin>
 
-      <!-- 2) Agrega target/generated-sources/jflex como raíz de fuentes -->
+      <!-- 2) Genera Parser.java y sym.java desde src/main/cup/Sintactico.cup (fase generate-sources) -->
+      <plugin>
+        <groupId>com.github.vbmacher</groupId>
+        <artifactId>cup-maven-plugin</artifactId>
+        <version>${cup-plugin.version}</version>
+        <configuration>
+          <cupFile>src/main/cup/Sintactico.cup</cupFile>
+          <outputDirectory>${project.build.directory}/generated-sources/cup</outputDirectory>
+          <packageName>unlu.teoi.grupo5.parser</packageName>
+          <symbolsName>sym</symbolsName>
+          <parserName>Parser</parserName>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 3) Agrega target/generated-sources/jflex y /cup como raíces de fuentes -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -73,10 +104,22 @@
               </sources>
             </configuration>
           </execution>
+          <execution>
+            <id>add-cup-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/cup</source>
+              </sources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
-      <!-- 3) Compila con JDK 17 (release fija el API level aunque se compile con un JDK más nuevo) -->
+      <!-- 4) Compila con JDK 17 (release fija el API level aunque se compile con un JDK más nuevo) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -86,14 +129,14 @@
         </configuration>
       </plugin>
 
-      <!-- 4) Ejecuta los tests JUnit 5 (fase test) -->
+      <!-- 5) Ejecuta los tests JUnit 5 (fase test) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
       </plugin>
 
-      <!-- 5) Empaqueta un JAR único ejecutable (java -jar) -->
+      <!-- 6) Empaqueta un JAR único ejecutable (java -jar) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>

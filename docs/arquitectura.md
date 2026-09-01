@@ -9,16 +9,18 @@ Qué hace cada componente y cómo se relacionan. Complementa al resumen del READ
 
 Aplicación de escritorio (Swing) que funciona como IDE del compilador: el usuario
 escribe o carga código fuente, el analizador léxico (generado por JFlex) lo
-tokeniza y la GUI muestra los tokens reconocidos o los errores; la tabla de
-símbolos guarda variables y constantes con sus atributos (NOMBRE, TOKEN, TIPO,
-VALOR, LONG, según la consigna).
+tokeniza, el analizador sintáctico (generado por JAVA CUP) valida la estructura
+del programa y la GUI muestra los tokens/reglas reconocidos o los errores; la
+tabla de símbolos guarda variables y constantes con sus atributos (NOMBRE,
+TOKEN, TIPO, VALOR, LONG, según la consigna).
 
 ```mermaid
 flowchart LR
     U[Usuario] --> G[gui: editor Swing]
     G -->|compilar| L[lexer: Lexico generado por JFlex]
-    L --> TS[symboltable: tabla de símbolos]
-    L --> S[gui: salida de tokens / errores]
+    L --> P[parser: Parser generado por JAVA CUP]
+    P --> TS[symboltable: tabla de símbolos]
+    P --> S[gui: salida de tokens / reglas / errores]
     M[main: Main.java] --> G
 ```
 
@@ -36,6 +38,14 @@ flowchart LR
 - El paquete alojará el código de soporte escrito a mano (clases de token,
   excepciones, constantes del léxico, etc.).
 
+### `unlu.teoi.grupo5.parser`
+- La especificación sintáctica `Sintactico.cup` vive físicamente en `src/main/cup/`.
+- En build, CUP genera `Parser.java` y `sym.java` en
+  `target/generated-sources/cup/unlu/teoi/grupo5/parser/` con
+  `package unlu.teoi.grupo5.parser`. Esos archivos **no se versionan ni se editan**.
+- El paquete alojará el código de soporte escrito a mano (clases de AST,
+  acciones semánticas, etc.) durante la entrega 2.
+
 ### `unlu.teoi.grupo5.gui`
 - Interfaz Swing del IDE: `JTextArea` para el código fuente, botones para
   cargar archivo y compilar, panel de salida para tokens y errores.
@@ -50,8 +60,9 @@ flowchart LR
 ## Pipeline de build
 
 1. `generate-sources` — `jflex-maven-plugin` lee `src/main/jflex/Lexico.flex` y
-   genera `Lexico.java`; `build-helper-maven-plugin` agrega esa carpeta como
-   raíz de fuentes.
+   genera `Lexico.java`; `cup-maven-plugin` lee `src/main/cup/Sintactico.cup` y
+   genera `Parser.java` y `sym.java`; `build-helper-maven-plugin` agrega ambas
+   carpetas de `target/generated-sources/` como raíces de fuentes.
 2. `compile` — `maven-compiler-plugin` compila `src/main/java` + fuentes
    generadas con `release 17`.
 3. `test` — `maven-surefire-plugin` ejecuta los tests JUnit 5 de `src/test/java`.
@@ -70,6 +81,7 @@ en cada `push` y `pull_request` sobre `main` y `develop`.
 | Archivo | Ubicación | Rol |
 |---|---|---|
 | `Lexico.flex` | `src/main/jflex/` | especificación léxica (lo procesa el build) |
+| `Sintactico.cup` | `src/main/cup/` | especificación sintáctica — entrega 2 (lo procesa el build) |
 | `prueba.txt` | `docs/entrega1/` | pruebas generales + prueba del tema SUMAIMPAR |
 | `ts.txt` | `docs/entrega1/` | tabla de símbolos |
 | JAR ejecutable | `target/teoi-grupo5-1.0-SNAPSHOT.jar` | generado con `./mvnw package`, no versionado |

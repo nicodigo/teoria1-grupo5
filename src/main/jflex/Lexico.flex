@@ -13,17 +13,21 @@
 // Primera sección: copiada tal cual al tope del archivo generado.
 package unlu.teoi.grupo5.lexer;
 
+import unlu.teoi.grupo5.parser.sym;
+
 %%
 
 /* Opciones y declaraciones de JFlex */
 %class Lexico
 %public
 %unicode
-%function yylex
-%type int
-%eofval{
-  return YYEOF;
-%eofval}
+/* Modo CUP: el lexer implementa java_cup.runtime.Scanner, escanea con
+   next_token() y devuelve java_cup.runtime.Symbol. Los tokens se crean con
+   new java_cup.runtime.Symbol(sym.X, ...) usando la interfaz sym generada
+   por CUP (ver src/main/cup/Sintactico.cup); el EOF se maneja solo
+   (new Symbol(sym.EOF)). */
+%cupsym unlu.teoi.grupo5.parser.sym
+%cup
 
 /* Macros (definiciones regulares) */
 WhiteSpace = [ \t\r\n]+
@@ -36,4 +40,4 @@ WhiteSpace = [ \t\r\n]+
 [^]            { /* TODO: regla temporal del kickstart; reemplazar por las
                     reglas léxicas del TP (identificadores, constantes
                     numéricas y string, comentarios, palabras reservadas) */
-                 return yytext().charAt(0); }
+                 return new java_cup.runtime.Symbol(sym.OTRO, yytext()); }

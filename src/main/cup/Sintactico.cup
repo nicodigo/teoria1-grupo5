@@ -1,0 +1,28 @@
+// ============================================================================
+// Sintactico.cup — especificación sintáctica del TP Compilador (Grupo 5)
+//
+// Procesada por cup-maven-plugin 11b-20160615-3 en la fase generate-sources. Genera en
+// target/generated-sources/cup/unlu/teoi/grupo5/parser/:
+//   Parser.java  (analizador sintáctico LALR)
+//   sym.java     (interfaz con las constantes de token)
+// El paquete se configura en pom.xml (<packageName>unlu.teoi.grupo5.parser).
+//
+// El código generado NO se versiona ni se edita: se edita este .cup y se
+// recompila (./mvnw verify).
+//
+// TODO: reemplazar este esqueleto por la gramática de la entrega 2
+// (DECLARE.SECTION / PROGRAM.SECTION, asignaciones, IF/WHILE, salida,
+// SUMAIMPAR, etc.). Al escribir la gramática, mantener los terminales en
+// sincronía con los tokens que devuelva Lexico.flex.
+// ============================================================================
+
+import java_cup.runtime.*;
+
+/* Terminales mínimos del esqueleto para que el pipeline compile. */
+terminal String OTRO;
+
+/* No terminal inicial (placeholder). */
+non terminal Object programa;
+
+/* Producción placeholder: un programa es exactamente un token OTRO. */
+programa ::= OTRO ;

@@ -6,6 +6,8 @@ Tema especial asignado: **SUMAIMPAR**.
 > Estado actual: **kickstart de la entrega 1** (8/10/26). El proyecto compila,
 > genera el analizador léxico, corre tests y empaqueta un JAR ejecutable, pero
 > **no contiene la lógica del TP**: eso se escribe a mano de acá en adelante.
+> La infraestructura del analizador sintáctico (JAVA CUP) ya está configurada
+> para la entrega 2 (23/11/26): el pipeline compila, falta escribir la gramática.
 
 - **Integrantes**: Abril Nadia Babino, Naiara Agustina Collazo, Nicolás Guillermo Huici, María Agustina Ortiz, Dante Juan Terranova.
 - **Consigna**: [`Consigna.md`](Consigna.md)
@@ -17,6 +19,8 @@ Tema especial asignado: **SUMAIMPAR**.
 | Lenguaje | Java (JDK) | **17** (LTS; el build fija `release 17`) |
 | Build | Maven (vía Maven Wrapper, no requiere instalación) | 3.9.14 (wrapper 3.3.4, modo `only-script`) |
 | Generador de lexer | JFlex (`jflex-maven-plugin`) | 1.9.1 |
+| Generador de parser | JAVA CUP (`cup-maven-plugin`) | 11b-20160615-3 |
+| Runtime de CUP | `java-cup-runtime` | 11b-20160615-3 |
 | GUI | Swing (`java.desktop`, incluida en el JDK) | incluida en JDK 17 |
 | Testing | JUnit 5 (Jupiter) | 5.11.3 |
 | Runner de tests | `maven-surefire-plugin` | 3.5.2 |
@@ -65,7 +69,9 @@ teoria1-grupo5/
 │   │   │   ├── gui/                 # interfaz Swing (JTextArea, botones, salida)
 │   │   │   ├── lexer/               # soporte del analizador léxico
 │   │   │   ├── main/Main.java       # punto de entrada
+│   │   │   ├── parser/              # soporte del analizador sintáctico
 │   │   │   └── symboltable/         # tabla de símbolos
+│   │   ├── cup/Sintactico.cup       # especificación sintáctica (lo que se edita)
 │   │   └── jflex/Lexico.flex        # especificación léxica (lo que se edita)
 │   └── test/java/unlu/teoi/grupo5/lexer/LexicoTest.java
 ├── Consigna.md
@@ -79,6 +85,9 @@ teoria1-grupo5/
 
 - **`lexer`**: la especificación `Lexico.flex` (fuente de verdad) y el soporte
   del lexer. `Lexico.java` se genera en `target/` en cada build y no se versiona.
+- **`parser`**: la especificación `Sintactico.cup` (fuente de verdad) y el
+  soporte del analizador sintáctico. `Parser.java` y `sym.java` se generan en
+  `target/` en cada build y no se versionan.
 - **`gui`**: interfaz Swing — cuadro de texto para el código, botones de
   cargar/compilar, panel de salida con tokens y errores.
 - **`symboltable`**: tabla de símbolos (columnas NOMBRE/TOKEN/TIPO/VALOR/LONG
@@ -99,4 +108,5 @@ Detalle: [`docs/arquitectura.md`](docs/arquitectura.md).
 - **Entrega 1** (8/10/26): `Lexico.flex`, `prueba.txt` y `ts.txt`
   (`docs/entrega1/`), código fuente y JAR ejecutable (generado on-demand con
   `./mvnw package`).
-- **Entrega 2** (23/11/26): agrega `Sintactico.cup` (JAVA CUP).
+- **Entrega 2** (23/11/26): `Sintactico.cup` (JAVA CUP) — el esqueleto y el
+  pipeline ya están configurados; falta escribir la gramática.

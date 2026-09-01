@@ -10,6 +10,8 @@ Si algo cambia, actualizar este archivo y la tabla del README.
 | Lenguaje | Java (JDK) | 17 (LTS) — build con `release 17` |
 | Build | Maven (Maven Wrapper) | 3.9.14 — wrapper 3.3.4 (`only-script`) |
 | Lexer | JFlex (`jflex-maven-plugin`) | 1.9.1 |
+| Parser | JAVA CUP (`cup-maven-plugin`) | 11b-20160615-3 |
+| Runtime CUP | `java-cup-runtime` | 11b-20160615-3 |
 | GUI | Swing | incluida en JDK 17 |
 | Testing | JUnit 5 (Jupiter) | 5.11.3 |
 | Tests runner | `maven-surefire-plugin` | 3.5.2 |
@@ -42,6 +44,17 @@ Si algo cambia, actualizar este archivo y la tabla del README.
 9. **Testing: JUnit 5** — estándar actual; surefire 3.x lo detecta solo.
 10. **Ramas: main + develop** — `main` protegida y solo con merges en entregas;
     `develop` de integración continua; features por tema/integrante.
+11. **Analizador sintáctico: JAVA CUP** — obligatorio por consigna para la
+    entrega 2. Se usa `cup-maven-plugin` (mismo autor que el runtime), que
+    genera `Parser.java` y `sym.java` en `target/generated-sources/cup` en la
+    fase `generate-sources`, igual que JFlex; `build-helper-maven-plugin` agrega
+    esa carpeta como raíz de fuentes. El archivo fuente se llama
+    `Sintactico.cup` (nombre exigido por la consigna) y vive en `src/main/cup/`.
+12. **Integración lexer↔parser con `%cup`** — `Lexico.flex` compila en modo
+    CUP: devuelve `java_cup.runtime.Symbol` y usa la interfaz `sym` generada
+    por CUP (`%cupsym unlu.teoi.grupo5.parser.sym`). Se hace desde el kickstart
+    para no reescribir las reglas léxicas en la entrega 2, cuando ya estén
+    completas.
 
 ## Decisiones operativas
 

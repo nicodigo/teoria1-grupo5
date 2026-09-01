@@ -10,8 +10,8 @@ Si algo cambia, actualizar este archivo y la tabla del README.
 | Lenguaje | Java (JDK) | 17 (LTS) — build con `release 17` |
 | Build | Maven (Maven Wrapper) | 3.9.14 — wrapper 3.3.4 (`only-script`) |
 | Lexer | JFlex (`jflex-maven-plugin`) | 1.9.1 |
-| Parser | JAVA CUP (`cup-maven-plugin`) | 2.3 |
-| Runtime CUP | `java-cup-runtime` | 11b-20160615-1 |
+| Parser | JAVA CUP (`cup-maven-plugin`) | 11b-20160615-3 |
+| Runtime CUP | `java-cup-runtime` | 11b-20160615-3 |
 | GUI | Swing | incluida en JDK 17 |
 | Testing | JUnit 5 (Jupiter) | 5.11.3 |
 | Tests runner | `maven-surefire-plugin` | 3.5.2 |

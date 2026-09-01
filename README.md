@@ -19,8 +19,8 @@ Tema especial asignado: **SUMAIMPAR**.
 | Lenguaje | Java (JDK) | **17** (LTS; el build fija `release 17`) |
 | Build | Maven (vía Maven Wrapper, no requiere instalación) | 3.9.14 (wrapper 3.3.4, modo `only-script`) |
 | Generador de lexer | JFlex (`jflex-maven-plugin`) | 1.9.1 |
-| Generador de parser | JAVA CUP (`cup-maven-plugin`) | 2.3 |
-| Runtime de CUP | `java-cup-runtime` | 11b-20160615-1 |
+| Generador de parser | JAVA CUP (`cup-maven-plugin`) | 11b-20160615-3 |
+| Runtime de CUP | `java-cup-runtime` | 11b-20160615-3 |
 | GUI | Swing (`java.desktop`, incluida en el JDK) | incluida en JDK 17 |
 | Testing | JUnit 5 (Jupiter) | 5.11.3 |
 | Runner de tests | `maven-surefire-plugin` | 3.5.2 |

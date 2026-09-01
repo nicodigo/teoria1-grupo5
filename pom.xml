@@ -18,8 +18,8 @@
 
     <!-- Versiones fijadas: ver docs/decisiones-tecnicas.md -->
     <jflex.version>1.9.1</jflex.version>
-    <cup.version>11b-20160615-1</cup.version>
-    <cup-plugin.version>2.3</cup-plugin.version>
+    <cup.version>11b-20160615-3</cup.version>
+    <cup-plugin.version>11b-20160615-3</cup-plugin.version>
     <junit.version>5.11.3</junit.version>
     <compiler-plugin.version>3.13.0</compiler-plugin.version>
     <surefire.version>3.5.2</surefire.version>
@@ -70,11 +70,11 @@
         <artifactId>cup-maven-plugin</artifactId>
         <version>${cup-plugin.version}</version>
         <configuration>
-          <cupFile>src/main/cup/Sintactico.cup</cupFile>
+          <cupDefinition>${project.basedir}/src/main/cup/Sintactico.cup</cupDefinition>
           <outputDirectory>${project.build.directory}/generated-sources/cup</outputDirectory>
           <packageName>unlu.teoi.grupo5.parser</packageName>
           <symbolsName>sym</symbolsName>
-          <parserName>Parser</parserName>
+          <className>Parser</className>
         </configuration>
         <executions>
           <execution>

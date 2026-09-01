@@ -1,7 +1,7 @@
 // ============================================================================
 // Sintactico.cup — especificación sintáctica del TP Compilador (Grupo 5)
 //
-// Procesada por cup-maven-plugin 2.3 en la fase generate-sources. Genera en
+// Procesada por cup-maven-plugin 11b-20160615-3 en la fase generate-sources. Genera en
 // target/generated-sources/cup/unlu/teoi/grupo5/parser/:
 //   Parser.java  (analizador sintáctico LALR)
 //   sym.java     (interfaz con las constantes de token)

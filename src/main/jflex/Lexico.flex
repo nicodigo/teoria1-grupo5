@@ -47,4 +47,4 @@ ID = [a-zA-Z][a-zA-Z1-9_]*
 [^]            { /* TODO: regla temporal del kickstart; reemplazar por las
                     reglas léxicas del TP (identificadores, constantes
                     numéricas y string, comentarios, palabras reservadas) */
-                 return new java_cup.runtime.Symbol(sym.OTRO, yytext()); }
+                 return new Symbol(sym.OTRO, yytext()); }

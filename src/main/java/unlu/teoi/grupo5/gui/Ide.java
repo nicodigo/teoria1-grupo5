@@ -18,6 +18,8 @@ import java_cup.runtime.Symbol;
 import unlu.teoi.grupo5.lexer.AnalizadorLexico;
 import unlu.teoi.grupo5.lexer.Lexico;
 import unlu.teoi.grupo5.parser.sym;
+import unlu.teoi.grupo5.tablasimbolos.TablaSimbolos;
+import unlu.teoi.grupo5.tablasimbolos.TablaSimbolosWriter;
 
 public class Ide extends JFrame {
 
@@ -102,12 +104,15 @@ public class Ide extends JFrame {
         String codigo = this.editor.getText();
         Lexico lexer = new Lexico(new StringReader(codigo));
         try {
-            Symbol symbol;
-            while ((symbol = lexer.next_token()).sym != sym.EOF) {
-                this.consola.append(
-                        "Token: " + symbol.sym +
-                                " | Valor: " + symbol.value + "\n");
-            }
+            analizadorLexico.analizar(lexer);
+            TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
+            this.consola.append(TablaSimbolosWriter.tablaToString(ts));
+            // Symbol symbol;
+            // while ((symbol = lexer.next_token()).sym != sym.EOF) {
+            //     this.consola.append(
+            //             "Token: " + symbol.sym +
+            //                     " | Valor: " + symbol.value + "\n");
+            // }
         } catch (Exception e) {
             e.printStackTrace();
         }

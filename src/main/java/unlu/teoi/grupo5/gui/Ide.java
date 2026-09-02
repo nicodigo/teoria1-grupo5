@@ -101,42 +101,6 @@ public class Ide extends JFrame {
         panelBotones.add(this.btnCompilar);
         add(panelBotones, BorderLayout.NORTH);
 
-        // Editor de código
-        this.editor = new EditorPanel();
-        this.consola = new ConsolaPanel();
-
-        this.btnCompilar = new JButton("Compilar");
-        estilizarBoton(this.btnCompilar);
-        this.btnCompilar.addActionListener(e -> compilar());
-    }
-
-    private void estilizarBoton(JButton boton) {
-        boton.setFont(FUENTE_BOTON);
-        boton.setForeground(Color.WHITE);
-        boton.setBackground(COLOR_BOTON);
-        boton.setFocusPainted(false);
-        boton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setHorizontalTextPosition(SwingConstants.CENTER);
-
-        boton.addChangeListener(e -> {
-            if (boton.getModel().isRollover()) {
-                boton.setBackground(COLOR_BOTON_HOVER);
-            } else {
-                boton.setBackground(COLOR_BOTON);
-            }
-        });
-    }
-
-    private void initLayout() {
-        setLayout(new BorderLayout());
-
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        panelBotones.setBackground(COLOR_FONDO);
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        panelBotones.add(this.btnCompilar);
-        add(panelBotones, BorderLayout.NORTH);
-
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 this.editor,
@@ -161,9 +125,9 @@ public class Ide extends JFrame {
             this.consola.append(TablaSimbolosWriter.tablaToString(ts));
             // Symbol symbol;
             // while ((symbol = lexer.next_token()).sym != sym.EOF) {
-            //     this.consola.append(
-            //             "Token: " + symbol.sym +
-            //                     " | Valor: " + symbol.value + "\n");
+            // this.consola.append(
+            // "Token: " + symbol.sym +
+            // " | Valor: " + symbol.value + "\n");
             // }
             Symbol symbol;
             while ((symbol = lexer.next_token()).sym != sym.EOF) {

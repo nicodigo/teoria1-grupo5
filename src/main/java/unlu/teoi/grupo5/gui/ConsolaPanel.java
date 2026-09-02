@@ -30,7 +30,6 @@ public class ConsolaPanel extends JPanel {
 
         textArea.setBorder(BorderFactory.createEmptyBorder());
 
-
         this.scrollPane = new JScrollPane(this.textArea);
 
         setLayout(new BorderLayout());

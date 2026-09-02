@@ -1,15 +1,11 @@
 package unlu.teoi.grupo5.gui;
 
 import java.awt.BorderLayout;
-<<<<<<< HEAD
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
-import java.awt.Font;
-
->>>>>>> 7aaa939 (agrego una mejor interfaz, los tokens ahora se imprimen por la consola del ide)
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;

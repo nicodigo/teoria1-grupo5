@@ -2,14 +2,14 @@ package unlu.teoi.grupo5.tablasimbolos;
 
 public class EntradaTS {
     private final String nombre;
-    private final int token;
+    private final String token;
     private final String tipo;
     private final Object valor;
     private final int longitud;
     private final int fila;
     private final int columna;
 
-    public EntradaTS(String nombre, int token, String tipo, Object valor, int longitud, int fila, int columna) {
+    public EntradaTS(String nombre, String token, String tipo, Object valor, int longitud, int fila, int columna) {
         this.nombre = nombre;
         this.token = token;
         this.tipo = tipo;
@@ -23,7 +23,7 @@ public class EntradaTS {
         return nombre;
     }
 
-    public int getToken() {
+    public String getToken() {
         return token;
     }
 

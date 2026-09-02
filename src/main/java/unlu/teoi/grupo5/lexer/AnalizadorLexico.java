@@ -43,7 +43,7 @@ public class AnalizadorLexico {
             case sym.ID:
                 entrada = new EntradaTS(
                         symbol.value.toString(),
-                        symbol.sym,
+                        "ID",
                         "",
                         null,
                         -1,

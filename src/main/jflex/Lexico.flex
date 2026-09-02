@@ -14,6 +14,7 @@
 package unlu.teoi.grupo5.lexer;
 
 import unlu.teoi.grupo5.parser.sym;
+import java_cup.runtime.Symbol;
 
 %%
 
@@ -28,16 +29,22 @@ import unlu.teoi.grupo5.parser.sym;
    (new Symbol(sym.EOF)). */
 %cupsym unlu.teoi.grupo5.parser.sym
 %cup
+%line
+%column
 
 /* Macros (definiciones regulares) */
 WhiteSpace = [ \t\r\n]+
+
+ID = [a-zA-Z][a-zA-Z1-9_]*
 
 %%
 
 /* Reglas */
 {WhiteSpace}   { /* los espacios en blanco no generan token */ }
 
+{ID} { return new Symbol(sym.ID, yyline, yycolumn, yytext()); }
+
 [^]            { /* TODO: regla temporal del kickstart; reemplazar por las
                     reglas léxicas del TP (identificadores, constantes
                     numéricas y string, comentarios, palabras reservadas) */
-                 return new java_cup.runtime.Symbol(sym.OTRO, yytext()); }
+                 return new Symbol(sym.OTRO, yytext()); }

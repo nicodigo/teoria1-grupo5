@@ -20,6 +20,7 @@ import java_cup.runtime.*;
 
 /* Terminales mínimos del esqueleto para que el pipeline compile. */
 terminal String OTRO;
+terminal String ID;
 
 /* No terminal inicial (placeholder). */
 non terminal Object programa;

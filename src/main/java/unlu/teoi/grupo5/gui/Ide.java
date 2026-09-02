@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+
 import java_cup.runtime.Symbol;
 import unlu.teoi.grupo5.lexer.AnalizadorLexico;
 import unlu.teoi.grupo5.lexer.Lexico;
@@ -50,6 +51,11 @@ public class Ide extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        initComponents();
+
+        initLayout();
+
     }
 
     private void initComponents() {
@@ -90,6 +96,28 @@ public class Ide extends JFrame {
         panelBotones.add(this.btnCompilar);
         add(panelBotones, BorderLayout.NORTH);
 
+        // Editor de código
+        this.editor = new EditorPanel();
+
+        this.consola = new ConsolaPanel();
+
+        // Botón
+        this.btnCompilar = new JButton("Compilar");
+        // Acción del botón
+        this.btnCompilar.addActionListener(e -> compilar());
+
+    }
+
+    private void initLayout() {
+        setLayout(new BorderLayout());
+
+        // Panel superior
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelBotones.add(this.btnCompilar);
+
+        add(panelBotones, BorderLayout.NORTH);
+
+        // Editor + consola
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 this.editor,
@@ -97,6 +125,10 @@ public class Ide extends JFrame {
         splitPane.setResizeWeight(0.75);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
+
+        // 75% editor / 25% consola aproximadamente
+        splitPane.setResizeWeight(0.75);
+
         add(splitPane, BorderLayout.CENTER);
     }
 
@@ -113,6 +145,12 @@ public class Ide extends JFrame {
             //             "Token: " + symbol.sym +
             //                     " | Valor: " + symbol.value + "\n");
             // }
+            Symbol symbol;
+            while ((symbol = lexer.next_token()).sym != sym.EOF) {
+                this.consola.append(
+                        "Token: " + symbol.sym +
+                                " | Valor: " + symbol.value + "\n");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

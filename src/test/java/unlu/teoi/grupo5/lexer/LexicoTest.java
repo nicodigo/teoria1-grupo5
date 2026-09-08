@@ -24,4 +24,22 @@ class LexicoTest {
         // Modo %cup: next_token() devuelve java_cup.runtime.Symbol; EOF = sym.EOF
         assertEquals(sym.EOF, lexico.next_token().sym);
     }
+
+    @Test
+    void reconoceComentarioSimple() throws Exception {
+        String str = "//* mi comentario *//";
+        Lexico lexico = new Lexico(new StringReader(str));
+        assertNotNull(lexico);
+        // Modo %cup: next_token() devuelve java_cup.runtime.Symbol; EOF = sym.EOF
+        assertEquals(sym.COMNT_SIMPLE, lexico.next_token().sym);
+    }
+
+    @Test
+    void elComentarioEsElStringEsperado() throws Exception {
+        String str = "//* mi comentario *//";
+        Lexico lexico = new Lexico(new StringReader(str));
+        assertNotNull(lexico);
+        // Modo %cup: next_token() devuelve java_cup.runtime.Symbol; EOF = sym.EOF
+        assertEquals(str, lexico.next_token().value);
+    }
 }

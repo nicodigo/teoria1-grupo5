@@ -36,6 +36,7 @@ import java_cup.runtime.Symbol;
 WhiteSpace = [ \t\r\n]+
 
 ID = [a-zA-Z][a-zA-Z1-9_]*
+COMENTARIO_SIMPLE = "//*" [^*] ~"*//"
 
 %%
 
@@ -43,6 +44,8 @@ ID = [a-zA-Z][a-zA-Z1-9_]*
 {WhiteSpace}   { /* los espacios en blanco no generan token */ }
 
 {ID} { return new Symbol(sym.ID, yyline, yycolumn, yytext()); }
+
+{COMENTARIO_SIMPLE} { return new Symbol(sym.COMNT_SIMPLE, yyline, yycolumn, yytext()); }
 
 [^]            { /* TODO: regla temporal del kickstart; reemplazar por las
                     reglas léxicas del TP (identificadores, constantes

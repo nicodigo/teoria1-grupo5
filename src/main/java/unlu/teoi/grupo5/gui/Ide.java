@@ -55,14 +55,6 @@ public class Ide extends JFrame {
         initLayout();
     }
 
-    private void aplicarLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void initComponents() {
         this.analizadorLexico = new AnalizadorLexico();
 

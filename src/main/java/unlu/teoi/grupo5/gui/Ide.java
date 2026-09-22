@@ -50,6 +50,9 @@ public class Ide extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        initComponents();
+        initLayout();
     }
 
     private void initComponents() {
@@ -97,6 +100,11 @@ public class Ide extends JFrame {
         splitPane.setResizeWeight(0.75);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
+
+        // 75% editor / 25% consola aproximadamente
+        splitPane.setResizeWeight(0.75);
+        splitPane.setDividerSize(6);
+        splitPane.setBorder(null);
         add(splitPane, BorderLayout.CENTER);
     }
 
@@ -109,10 +117,16 @@ public class Ide extends JFrame {
             this.consola.append(TablaSimbolosWriter.tablaToString(ts));
             // Symbol symbol;
             // while ((symbol = lexer.next_token()).sym != sym.EOF) {
-            //     this.consola.append(
-            //             "Token: " + symbol.sym +
-            //                     " | Valor: " + symbol.value + "\n");
+            // this.consola.append(
+            // "Token: " + symbol.sym +
+            // " | Valor: " + symbol.value + "\n");
             // }
+            Symbol symbol;
+            while ((symbol = lexer.next_token()).sym != sym.EOF) {
+                this.consola.append(
+                        "Token: " + symbol.sym +
+                                " | Valor: " + symbol.value + "\n");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

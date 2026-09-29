@@ -30,6 +30,37 @@ import java_cup.runtime.Symbol;
 %line
 %column
 
+%{
+/* Código Java embebido para realizar los controles de bits y caracteres */
+
+    private void validarString(String texto) {
+        // yytext() incluye las comillas, por eso restamos 2
+        if (texto.length() - 2 > 30) {
+            throw new Error("Error Lexico: El string supera los 30 caracteres en la linea " + yyline);
+        }
+    }
+
+    private void validarEntero16Bits(String texto) {
+        try {
+            int valor = Integer.parseInt(texto);
+            // El valor máximo para un entero con signo de 16 bits es 32767
+            if (valor > 32767) { 
+                throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + yyline);
+            }
+        } catch (NumberFormatException e) {
+            // Si salta esta excepción, el número es tan grande que ni siquiera entra en un int normal
+            throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + yyline);
+        }
+    }
+
+    private void validarReal32Bits(String texto) {
+        float valor = Float.parseFloat(texto);
+      if (Float.isInfinite(valor)) {
+        throw new Error("Error Lexico: El real supera el limite de 32 bits en la linea " + (yyline + 1));
+      }
+    }
+%}
+
 /* Macros (definiciones regulares) */
 LETRA = [a-zA-Z] 
 DIGITO = [0-9]
@@ -90,9 +121,9 @@ CTE_STRING =  \"[^\"]*\"
 
 
 {ID} { return new Symbol(sym.ID, yyline, yycolumn, yytext()); }
-{CTE_E}              { return new Symbol(sym.CTE_E, yyline, yycolumn, yytext()); }
-{CTE_F}              { return new Symbol(sym.CTE_F, yyline, yycolumn, yytext()); }
-{CTE_STRING}         { return new Symbol(sym.CTE_STRING, yyline, yycolumn, yytext()); }
+{CTE_E}              { validarEntero16Bits(yytext()); return new Symbol(sym.CTE_E, yyline, yycolumn, yytext()); }
+{CTE_F}              { validarReal32Bits(yytext());   return new Symbol(sym.CTE_F, yyline, yycolumn, yytext()); }
+{CTE_STRING}         { validarString(yytext());       return new Symbol(sym.CTE_STRING, yyline, yycolumn, yytext()); }
 {COMENTARIO}	{/* No se realiza accion por lo tanto se ignoran*/}
 {ESPACIO}   { /* los espacios en blanco no generan token */ }
 

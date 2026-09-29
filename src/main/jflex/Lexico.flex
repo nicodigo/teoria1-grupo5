@@ -55,7 +55,7 @@ CTE_STRING =  \"[^\"]*\"
 "WHILE"              { return new Symbol(sym.WHILE, yyline, yycolumn, yytext()); }
 "WRITE"              { return new Symbol(sym.WRITE, yyline, yycolumn, yytext()); }
 "FLOAT"              { return new Symbol(sym.FLOAT, yyline, yycolumn, yytext()); }
-"INT"            { return new Symbol(sym.INTEGER, yyline, yycolumn, yytext()); }
+"INT"                { return new Symbol(sym.INT, yyline, yycolumn, yytext()); }
 "STRING"             { return new Symbol(sym.STRING, yyline, yycolumn, yytext()); }
 "SUMAIMPAR"          { return new Symbol(sym.SUMAIMPAR, yyline, yycolumn, yytext()); }
 

@@ -44,4 +44,8 @@ public class EditorPanel extends JPanel {
     public String getText() {
         return this.textArea.getText();
     }
+
+    public void setText(String texto) {
+        this.textArea.setText(texto);
+    }
 }

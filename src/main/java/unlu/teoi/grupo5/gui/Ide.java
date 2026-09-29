@@ -217,7 +217,7 @@ public class Ide extends JFrame {
 
     private void compilar() {
         this.consola.clear();
-        this.statusBar.setText(" Estado: Compilando...");
+        this.statusBar.setText("Estado: Compilando...");
         String codigo = this.editor.getText();
 
         try {
@@ -231,11 +231,14 @@ public class Ide extends JFrame {
             this.consola.append("--- TABLA DE SIMBOLOS ---\n");
             this.consola.append(stringTabla);
 
+            // Autoguardado en docs/entrega1/ts.txt
             try {
-                Files.write(Paths.get("ts.txt"), stringTabla.getBytes());
-                this.consola.append("\n[INFO] Tabla guardada automaticamente en ts.txt\n");
+                java.nio.file.Path dirPath = Paths.get("docs", "entrega1");
+                Files.createDirectories(dirPath);
+                Files.write(dirPath.resolve("ts.txt"), stringTabla.getBytes());
+                this.consola.append("\n[INFO] Tabla guardada automaticamente en docs/entrega1/ts.txt\n");
             } catch (Exception ex) {
-                this.consola.append("\n[ERROR] No se pudo guardar ts.txt automaticamente.\n");
+                this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta docs/entrega1.\n");
             }
 
             this.consola.append("\n--- TOKENS RECONOCIDOS ---\n");
@@ -246,14 +249,14 @@ public class Ide extends JFrame {
                 String valor = (symbol.value != null) ? symbol.value.toString() : "-";
                 this.consola.append("Token ID: " + symbol.sym + " | Valor: " + valor + "\n");
             }
-            this.statusBar.setText(" Estado: Compilacion exitosa");
+            this.statusBar.setText("Estado: Compilacion exitosa");
 
         } catch (Error e) {
             this.consola.append("\n[ERROR LEXICO] " + e.getMessage() + "\n");
-            this.statusBar.setText(" Estado: Error Lexico detectado");
+            this.statusBar.setText("Estado: Error Lexico detectado");
         } catch (Exception e) {
             this.consola.append("\n[ERROR SISTEMA] " + e.getMessage() + "\n");
-            this.statusBar.setText(" Estado: Error de Sistema");
+            this.statusBar.setText("Estado: Error de Sistema");
         }
     }
 }

@@ -4,10 +4,9 @@ import java.nio.file.Path;
 
 public class TablaSimbolosWriter {
 
-    private static final String formato = "%-8s | %-15s | %-10s | %-10s | %-10s | %-5s";
+    private static final String formato = "%-15s | %-10s | %-10s | %-10s | %-5s";
     private static final String HEADER = String.format(
             formato,
-            "LINEA",
             "NOMBRE",
             "TOKEN",
             "TIPO",
@@ -35,7 +34,6 @@ public class TablaSimbolosWriter {
     private static String entradaToString(EntradaTS entrada) {
         return String.format(
                 formato,
-                entrada.getFila() + ":" + entrada.getColumna(),
                 entrada.getNombre(),
                 entrada.getToken(),
                 entrada.getTipo() != null ? entrada.getTipo() : "-",

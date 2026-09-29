@@ -6,11 +6,9 @@
 //
 // El archivo generado NO se versiona y NO se edita: se edita este .flex
 // y se recompila (./mvnw verify).
-//
-// TODO: reemplazar las reglas de la tercera sección por la gramática del TP.
-// ============================================================================
 
-// Primera sección: copiada tal cual al tope del archivo generado.
+
+// Primera sección: 
 package unlu.teoi.grupo5.lexer;
 
 import unlu.teoi.grupo5.parser.sym;

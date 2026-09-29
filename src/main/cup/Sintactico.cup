@@ -18,13 +18,28 @@
 
 import java_cup.runtime.*;
 
-/* Terminales mínimos del esqueleto para que el pipeline compile. */
-terminal String OTRO;
-terminal String ID;
-terminal String COMNT_SIMPLE;
+/* Palabras reservadas */
+terminal String DECLARE_SECTION, ENDDECLARE_SECTION, PROGRAM_SECTION, ENDPROGRAM_SECTION;
+terminal String FLOAT, INT, STRING;
+terminal String WHILE, IF, ELSE, WRITE;
+terminal String SUMAIMPAR;
 
-/* No terminal inicial (placeholder). */
+/* Operadores Lógicos y Relacionales */
+terminal String AND, OR;
+terminal String MENOR, MAYOR, MAYORIGUAL, MENORIGUAL, DISTINTO;
+
+/* Operadores Matemáticos y Asignación */
+terminal String ASIGNACION, SUMA, RESTA, DIVISION, MULTIPLICACION;
+
+/* Símbolos */
+terminal String PARA, PARC, LLAVEA, LLAVEC, CORCHETEA, CORCHETEC;
+terminal String PUNTOYCOMA, COMA;
+
+/* Variables y Constantes */
+terminal String ID, CTE_STRING, CTE_E, CTE_F;
+
+/* No terminal inicial (placeholder para que compile) */
 non terminal Object programa;
 
-/* Producción placeholder: un programa es exactamente un token OTRO. */
-programa ::= OTRO ;
+/* Producción vacía: no evaluamos sintaxis en la Entrega 1 */
+programa ::= ;

@@ -6,11 +6,9 @@
 //
 // El archivo generado NO se versiona y NO se edita: se edita este .flex
 // y se recompila (./mvnw verify).
-//
-// TODO: reemplazar las reglas de la tercera sección por la gramática del TP.
-// ============================================================================
 
-// Primera sección: copiada tal cual al tope del archivo generado.
+
+// Primera sección: 
 package unlu.teoi.grupo5.lexer;
 
 import unlu.teoi.grupo5.parser.sym;
@@ -57,7 +55,7 @@ CTE_STRING =  \"[^\"]*\"
 "WHILE"              { return new Symbol(sym.WHILE, yyline, yycolumn, yytext()); }
 "WRITE"              { return new Symbol(sym.WRITE, yyline, yycolumn, yytext()); }
 "FLOAT"              { return new Symbol(sym.FLOAT, yyline, yycolumn, yytext()); }
-"INT"            { return new Symbol(sym.INTEGER, yyline, yycolumn, yytext()); }
+"INT"                { return new Symbol(sym.INT, yyline, yycolumn, yytext()); }
 "STRING"             { return new Symbol(sym.STRING, yyline, yycolumn, yytext()); }
 "SUMAIMPAR"          { return new Symbol(sym.SUMAIMPAR, yyline, yycolumn, yytext()); }
 

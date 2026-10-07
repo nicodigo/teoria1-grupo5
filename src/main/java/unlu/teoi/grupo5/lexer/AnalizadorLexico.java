@@ -19,13 +19,16 @@ public class AnalizadorLexico {
 
         do {
             symbol = lexico.next_token();
-
-            if (debeRegistrarseEnTabla(symbol)) {
-                EntradaTS entrada = convertirAEntrada(symbol);
-                tablaSimbolos.insertar(entrada);
-            }
+            procesarToken(symbol);
         } while (symbol.sym != sym.EOF);
 
+    }
+
+    public void procesarToken(Symbol symbol) {
+        if (debeRegistrarseEnTabla(symbol)) {
+            EntradaTS entrada = convertirAEntrada(symbol);
+            tablaSimbolos.insertar(entrada);
+        }
     }
 
     private boolean debeRegistrarseEnTabla(Symbol symbol) {
@@ -51,9 +54,7 @@ public class AnalizadorLexico {
                         "ID",
                         "",
                         null,
-                        -1,
-                        symbol.left,
-                        symbol.right);
+                        -1);
                 break;
 
             case sym.CTE_E:
@@ -62,9 +63,7 @@ public class AnalizadorLexico {
                         "CTE_E",
                         "",
                         nombre, // Guarda el valor
-                        nombre.length(), // Guarda la longitud
-                        symbol.left,
-                        symbol.right);
+                        -1); // No hace falta longitud para constantes numericas
                 break;
 
             case sym.CTE_F:
@@ -73,9 +72,7 @@ public class AnalizadorLexico {
                         "CTE_F",
                         "",
                         nombre, // Guarda el valor
-                        nombre.length(), // Guarda la longitud
-                        symbol.left,
-                        symbol.right);
+                        -1); // No hace falta longitud para constantes numericas
                 break;
 
             case sym.CTE_STRING:
@@ -87,9 +84,7 @@ public class AnalizadorLexico {
                         "CTE_STRING",
                         "",
                         valorLimpio, // Guarda el valor sin comillas
-                        valorLimpio.length(), // Longitud del texto real
-                        symbol.left,
-                        symbol.right);
+                        valorLimpio.length()); // Longitud del texto real
                 break;
 
             default:

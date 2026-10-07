@@ -6,17 +6,13 @@ public class EntradaTS {
     private final String tipo;
     private final Object valor;
     private final int longitud;
-    private final int fila;
-    private final int columna;
 
-    public EntradaTS(String nombre, String token, String tipo, Object valor, int longitud, int fila, int columna) {
+    public EntradaTS(String nombre, String token, String tipo, Object valor, int longitud) {
         this.nombre = nombre;
         this.token = token;
         this.tipo = tipo;
         this.valor = valor;
         this.longitud = longitud;
-        this.fila = fila;
-        this.columna = columna;
     }
 
     public String getNombre() {
@@ -37,14 +33,6 @@ public class EntradaTS {
 
     public int getLongitud() {
         return longitud;
-    }
-
-    public int getFila() {
-        return fila;
-    }
-
-    public int getColumna() {
-        return columna;
     }
 
 }

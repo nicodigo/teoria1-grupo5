@@ -1,4 +1,85 @@
-# prueba.txt — archivo de pruebas generales (Entrega 1, 8/10/26)
-#
-# Debe incluir la prueba del tema especial del grupo: SUMAIMPAR.
-# TODO: reemplazar este contenido por las pruebas reales del TP.
+//* prueba.txt - archivo de pruebas generales (Entrega 1, 8/10/26) *//
+//* Grupo 5 - tema especial: SUMAIMPAR *//
+
+//* Este comentario ocupa
+   varias lineas y se ignora *//
+
+DECLARE.SECTION
+    INT a, b, contador;
+    FLOAT x, y, promedio;
+    STRING nombre, mensaje;
+    INT resultado, var_1, var2;
+ENDDECLARE.SECTION
+
+PROGRAM.SECTION
+
+    //* --- Constantes enteras (limite 16 bits: 32767 es valido) *//
+    a ::= 0;
+    b ::= 32767;
+    contador ::= 100;
+
+    //* --- Constantes reales (con parte entera, sin parte entera, sin parte decimal) *//
+    x ::= 3.14;
+    y ::= .5;
+    promedio ::= 5.;
+
+    //* --- Constantes string (la ultima tiene exactamente 30 caracteres) *//
+    nombre ::= "Naiara";
+    mensaje ::= "abcdefghijklmnopqrstuvwxyz1234";
+
+    //* --- Operadores aritmeticos *//
+    resultado ::= (a + b) * 2 - contador / 4;
+
+    //* --- WHILE con operador relacional *//
+    WHILE (contador > 0) {
+        contador ::= contador - 1;
+    }
+
+    //* --- IF / ELSE con cada operador relacional *//
+    IF (a >= 1) {
+        WRITE("mayor o igual");
+    } ELSE {
+        WRITE("menor");
+    }
+
+    IF (a <= b) {
+        WRITE("menor o igual");
+    }
+
+    IF (a != b) {
+        WRITE("distinto");
+    }
+
+    IF (a < b) {
+        WRITE("menor estricto");
+    }
+
+    //* --- Un unico conector logico por condicion *//
+    IF (a > 0 AND b > 0) {
+        WRITE("ambos positivos");
+    }
+
+    WHILE (a < 10 OR b < 10) {
+        a ::= a + 1;
+    }
+
+    //* --- Tema especial: SUMAIMPAR(N; [lista de enteros positivos]) *//
+
+    //* Caso normal: suma los primeros 3 impares (1 + 3 + 5) *//
+    resultado ::= SUMAIMPAR(3; [1, 2, 3, 4, 5, 6, 7]);
+
+    //* Caso con pivot igual a 1 *//
+    resultado ::= SUMAIMPAR(1; [2, 4, 9]);
+
+    //* Caso sin impares suficientes *//
+    resultado ::= SUMAIMPAR(5; [2, 4, 7]);
+
+    //* Caso con lista vacia *//
+    resultado ::= SUMAIMPAR(2; []);
+
+    //* Caso con variable como elemento de la lista *//
+    resultado ::= SUMAIMPAR(2; [a, 7, 9]);
+
+    WRITE(resultado);
+
+ENDPROGRAM.SECTION

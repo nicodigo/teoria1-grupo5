@@ -1,7 +1,35 @@
 NOMBRE          | TOKEN      | TIPO       | VALOR      | LONG 
-hola            | ID         |            | -          | -    
-"hola"          | CTE_STRING |            | hola       | 4    
-chau            | ID         |            | -          | -    
-"chau"          | CTE_STRING |            | chau       | 4    
-123             | CTE_E      |            | 123        | -    
-1.4             | CTE_F      |            | 1.4        | -    
+a               | ID         |            | -          | -    
+b               | ID         |            | -          | -    
+contador        | ID         |            | -          | -    
+x               | ID         |            | -          | -    
+y               | ID         |            | -          | -    
+promedio        | ID         |            | -          | -    
+nombre          | ID         |            | -          | -    
+mensaje         | ID         |            | -          | -    
+resultado       | ID         |            | -          | -    
+var_1           | ID         |            | -          | -    
+var2            | ID         |            | -          | -    
+0               | CTE_E      |            | 0          | 1    
+32767           | CTE_E      |            | 32767      | 5    
+100             | CTE_E      |            | 100        | 3    
+3.14            | CTE_F      |            | 3.14       | 4    
+.5              | CTE_F      |            | .5         | 2    
+5.              | CTE_F      |            | 5.         | 2    
+"Naiara"        | CTE_STRING |            | Naiara     | 6    
+"abcdefghijklmnopqrstuvwxyz1234" | CTE_STRING |            | abcdefghijklmnopqrstuvwxyz1234 | 30   
+2               | CTE_E      |            | 2          | 1    
+4               | CTE_E      |            | 4          | 1    
+1               | CTE_E      |            | 1          | 1    
+"mayor o igual" | CTE_STRING |            | mayor o igual | 13   
+"menor"         | CTE_STRING |            | menor      | 5    
+"menor o igual" | CTE_STRING |            | menor o igual | 13   
+"distinto"      | CTE_STRING |            | distinto   | 8    
+"menor estricto" | CTE_STRING |            | menor estricto | 14   
+"ambos positivos" | CTE_STRING |            | ambos positivos | 15   
+10              | CTE_E      |            | 10         | 2    
+3               | CTE_E      |            | 3          | 1    
+5               | CTE_E      |            | 5          | 1    
+6               | CTE_E      |            | 6          | 1    
+7               | CTE_E      |            | 7          | 1    
+9               | CTE_E      |            | 9          | 1    

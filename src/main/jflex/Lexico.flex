@@ -66,7 +66,9 @@ LETRA = [a-zA-Z]
 DIGITO = [0-9]
 ESPACIO = [ \t\f\n\r\n]+
 ID = {LETRA} ({LETRA}|{DIGITO}|_)*
-COMENTARIO = "//*" [^*] ~"*//"
+TEXTO_COMENT = !([^]* ("//*" | "*//") [^]*)
+COMENTARIO_INTERNO = "//*" {TEXTO_COMENT} "*//"
+COMENTARIO = "//*" ({TEXTO_COMENT} | {COMENTARIO_INTERNO})* "*//"
 
 /*Constantes*/
 CTE_E = {DIGITO}+

@@ -4,6 +4,16 @@
 //* Este comentario ocupa
    varias lineas y se ignora *//
 
+//*
+Y este comentario puede tener
+estos caracteres: */ // /* sin problema,
+    //* Puede tener un comentario anidado*//
+    //* y cuando termina ese comentario,
+    comenzar otro comentario anidado *//
+    //* y así sucesivamente *//
+hasta que termina
+*//
+
 DECLARE.SECTION
     INT a, b, contador;
     FLOAT x, y, promedio;

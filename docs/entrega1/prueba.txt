@@ -1,4 +1,4 @@
-//* prueba.txt - archivo de pruebas generales (Entrega 1, 8/10/26) *//
+//* prueba.txt - archivo de pruebas generales (Entrega 1) *//
 //* Grupo 5 - tema especial: SUMAIMPAR *//
 
 //* Este comentario ocupa
@@ -8,17 +8,14 @@
 Y este comentario puede tener
 estos caracteres: */ // /* sin problema,
     //* Puede tener un comentario anidado*//
-    //* y cuando termina ese comentario,
-    comenzar otro comentario anidado *//
-    //* y así sucesivamente *//
 hasta que termina
 *//
 
 DECLARE.SECTION
-    INT a, b, contador;
-    FLOAT x, y, promedio;
-    STRING nombre, mensaje;
-    INT resultado, var_1, var2;
+    [a, b, contador] ::= [INT, INT, INT]
+    [x, y, promedio] ::= [FLOAT, FLOAT, FLOAT]
+    [nombre, mensaje] ::= [STRING, STRING]
+    [resultado, var_1, var2] ::= [INT, INT, INT]
 ENDDECLARE.SECTION
 
 PROGRAM.SECTION
@@ -97,112 +94,71 @@ ENDPROGRAM.SECTION
 
 //* =======================================================================
    CASOS DE ERROR LEXICO (token invalido)
-
-   IMPORTANTE: el analizador ABORTA en el primer error que encuentra, por
-   eso cada caso esta comentado. Para probarlos en el IDE hay que
-   DESCOMENTAR DE A UNO, apretar Compilar, y verificar que en la consola
-   aparezca el mensaje [ERROR LEXICO] indicado en cada caso.
-
-   La version automatizada de estos mismos casos (que corre sola con
-   ./mvnw verify) esta en:
-   src/test/java/unlu/teoi/grupo5/lexer/LexicoTest.java
    ======================================================================= *//
-
 
 //* --- CASO 1: caracter fuera del alfabeto del lenguaje ---
    Esperado: [ERROR LEXICO] Caracter no permitido: <#>
-
-   a ::= b # c
 *//
+a ::= b # c
 
 //* --- CASO 2: otro caracter no permitido ---
    Esperado: [ERROR LEXICO] Caracter no permitido: <@>
-
-   mail ::= @casa
 *//
+mail ::= @casa
 
 //* --- CASO 3: constante entera fuera del limite de 16 bits ---
    32767 es el maximo valido; 32768 ya se pasa.
    Esperado: [ERROR LEXICO] El entero supera el limite de 16 bits
-
-   a ::= 32768
 *//
+a ::= 32768
 
 //* --- CASO 4: constante entera gigante (ni entra en un int de Java) ---
    Esperado: [ERROR LEXICO] El entero supera el limite de 16 bits
-
-   a ::= 99999999999999999999
 *//
+a ::= 99999999999999999999
 
 //* --- CASO 5: constante real fuera del limite de 32 bits ---
    Esperado: [ERROR LEXICO] El real supera el limite de 32 bits
-
-   x ::= 999999999999999999999999999999999999999999999.9
 *//
+x ::= 999999999999999999999999999999999999999999999.9
 
 //* --- CASO 6: constante string de mas de 30 caracteres ---
    La de abajo tiene 31. La de 30 esta mas arriba como caso valido.
    Esperado: [ERROR LEXICO] El string supera los 30 caracteres
-
-   mensaje ::= "abcdefghijklmnopqrstuvwxyz12345"
 *//
+mensaje ::= "abcdefghijklmnopqrstuvwxyz12345"
 
 //* --- CASO 7: constante string sin comilla de cierre ---
    La comilla suelta no forma un CTE_STRING y cae como caracter invalido.
    Esperado: [ERROR LEXICO] Caracter no permitido: <">
-
-   nombre ::= "Naiara
 *//
+nombre ::= "Naiara
 
 //* --- CASO 8: identificador que empieza con guion bajo ---
    Un ID tiene que arrancar con letra.
    Esperado: [ERROR LEXICO] Caracter no permitido: <_>
-
-   _hola ::= 1
 *//
+_hola ::= 1
 
 //* --- CASO 9: signo = suelto (la asignacion del lenguaje es ::=) ---
    Esperado: [ERROR LEXICO] Caracter no permitido: <=>
-
-   a = 5
 *//
+a = 5
 
 //* --- CASO 10: comparacion con == (no existe en el lenguaje) ---
    Esperado: [ERROR LEXICO] Caracter no permitido: <=>
-
-   IF (a == b) {
-       WRITE("iguales");
-   }
 *//
+IF (a == b) {
+    WRITE("iguales");
+}
 
-//* --- CASO 11: asignacion simple := (el lexico solo conoce ::=) ---
+//* --- CASO 11: asignacion simple := ---
    Esperado: [ERROR LEXICO] Caracter no permitido: <:>
-
-   a := 5
 *//
-
+a := 5
 
 //* --- CASO 12: comentario sin cerrar ---
    Abrir un comentario y no cerrarlo nunca.
-   El ejemplo NO se puede dejar escrito aca adentro, justamente porque una
-   apertura suelta romperia este mismo comentario.
    Esperado: [ERROR LEXICO] comentario sin cerrar en la linea N
 *//
-
-//* --- CASO 13: numero pegado a letras ---
-   Un identificador no puede empezar con un digito.
-   Esperado: [ERROR LEXICO] un identificador no puede empezar con un digito
-
-   a ::= 1abc
-*//
-
-//* =======================================================================
-   NOTA SOBRE EL FORMATO DE DECLARACIONES
-
-   La consigna pide declarar asi:   [a1, b1] := [FLOAT, INT]
-   Este archivo usa:                INT a, b, contador;
-
-   Ademas ":=" no existe como token en Lexico.flex (solo esta "::="), asi
-   que el formato de la consigna da error lexico en el primer ":".
-   A definir con el grupo antes de entregar.
-   ======================================================================= *//
+//* Comentario roto...

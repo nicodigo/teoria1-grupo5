@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public class TablaSimbolosWriter {
 
-    private static final String formato = "%-15s | %-10s | %-10s | %-10s | %-5s";
+    private static final String formato = "%-35s | %-15s | %-10s | %-35s | %-5s";
     private static final String HEADER = String.format(
             formato,
             "NOMBRE",

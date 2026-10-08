@@ -66,15 +66,13 @@ LETRA = [a-zA-Z]
 DIGITO = [0-9]
 ESPACIO = [ \t\f\n\r\n]+
 ID = {LETRA} ({LETRA}|{DIGITO}|_)*
-TEXTO_COMENT = !([^]* ("//*" | "*//") [^]*)
-COMENTARIO_INTERNO = "//*" {TEXTO_COMENT} "*//"
-COMENTARIO = "//*" {TEXTO_COMENT} ({COMENTARIO_INTERNO} {TEXTO_COMENT})* "*//"
+CSC = [^/] | "/" [^/] | "//" [^*]
+COMENTARIO = "//*" {CSC}* ("//*" {CSC}* "*//")? {CSC}* "*//"
 
 /*Constantes*/
 CTE_E = {DIGITO}+
 CTE_F = ({DIGITO}+ "." {DIGITO}*) | ({DIGITO}* "." {DIGITO}+)
 CTE_STRING =  \"[^\"]*\"
-NUM_PEGADO_A_LETRAS = {DIGITO}+ ({LETRA}|_)+
 
 
 %%
@@ -133,8 +131,6 @@ NUM_PEGADO_A_LETRAS = {DIGITO}+ ({LETRA}|_)+
    la regla {COMENTARIO} de arriba, que matchea mas largo. */
 "//*"                { throw new Error("Error Lexico: comentario sin cerrar en la linea " + (yyline + 1)); }
 
-/* Un identificador no puede empezar con un digito: 1abc, 2_x, etc. */
-{NUM_PEGADO_A_LETRAS} { throw new Error("Error Lexico: un identificador no puede empezar con un digito: <" + yytext() + "> en la linea " + (yyline + 1)); }
 {ESPACIO}   { /* los espacios en blanco no generan token */ }
 
 [^]             { throw new Error("Caracter no permitido: <" + yytext() + "> en linea " + (yyline + 1)); }

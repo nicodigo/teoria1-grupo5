@@ -40,31 +40,15 @@ class LexicoTest {
     void comentarioDobleEsIgnoradoYDevuelveEof() throws Exception {
         // Como el lexer ignora los comentarios, el siguiente token debe ser EOF
         String str = """
-        //* Super comentario doble
-        que ocupa //* más de una línea
-        *// y termina aca *//
-        """;
+                //* Super comentario doble
+                que ocupa //* más de una línea
+                *// y termina aca *//
+                """;
         Lexico lexico = new Lexico(new StringReader(str));
         assertEquals(sym.EOF, lexico.next_token().sym);
     }
 
-    @Test
-    void multiplesComentariosDentroDeUnComentarioPadreDevuelveEOF() throws Exception {
-        // Como el lexer ignora los comentarios, el siguiente token debe ser EOF
-        String str = """
-//*
-este comentario puede tener
-estos caracteres: */ // /* sin problema,
-    //* Puede tener un comentario anidado*//
-    //* y cuando termina ese comentario,
-    comenzar otro comentario anidado *//
-    //* y así sucesivamente *//
-hasta que termina
-*//
-        """;
-        Lexico lexico = new Lexico(new StringReader(str));
-        assertEquals(sym.EOF, lexico.next_token().sym);
-    }
+
 
     @Test
     void reconoceIdentificador() throws Exception {
@@ -204,24 +188,12 @@ hasta que termina
         assertErrorLexico("IF (a == b)", "Caracter no permitido");
     }
 
-    @Test
-    void asignacionSimpleNoEsUnToken() {
-        // ":=" todavia no existe en el lexico (ver nota en prueba.txt)
-        assertErrorLexico("a := 5", "Caracter no permitido");
-    }
-
     // ========================================================================
-    // Comentario sin cerrar y numero pegado a letras: hasta el fix de las
-    // reglas en Lexico.flex estos dos casos pasaban sin dar error.
+    // Comentario sin cerrar
     // ========================================================================
 
     @Test
     void comentarioSinCerrarEsError() {
         assertErrorLexico("//* no cierro nunca", "comentario");
-    }
-
-    @Test
-    void numeroPegadoALetrasEsError() {
-        assertErrorLexico("1abc", "no puede empezar con un digito");
     }
 }

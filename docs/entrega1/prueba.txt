@@ -1,4 +1,4 @@
-//* prueba.txt - archivo de pruebas generales (Entrega 1, 8/10/26) *//
+//* prueba.txt - archivo de pruebas generales (Entrega 1) *//
 //* Grupo 5 - tema especial: SUMAIMPAR *//
 
 //* Este comentario ocupa
@@ -8,17 +8,14 @@
 Y este comentario puede tener
 estos caracteres: */ // /* sin problema,
     //* Puede tener un comentario anidado*//
-    //* y cuando termina ese comentario,
-    comenzar otro comentario anidado *//
-    //* y así sucesivamente *//
 hasta que termina
 *//
 
 DECLARE.SECTION
-    INT a, b, contador;
-    FLOAT x, y, promedio;
-    STRING nombre, mensaje;
-    INT resultado, var_1, var2;
+    [a, b, contador] ::= [INT, INT, INT]
+    [x, y, promedio] ::= [FLOAT, FLOAT, FLOAT]
+    [nombre, mensaje] ::= [STRING, STRING]
+    [resultado, var_1, var2] ::= [INT, INT, INT]
 ENDDECLARE.SECTION
 
 PROGRAM.SECTION
@@ -93,3 +90,5 @@ PROGRAM.SECTION
     WRITE(resultado);
 
 ENDPROGRAM.SECTION
+
+

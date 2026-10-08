@@ -197,6 +197,7 @@ public class Ide extends JFrame {
                 this.editor.setText(contenido);
                 this.statusBar.setText(" Estado: Archivo cargado (" + file.getName() + ")");
             } catch (Exception ex) {
+                this.consola.setColor(new Color(255, 0, 0));
                 this.consola.append("\n[ERROR] No se pudo leer el archivo.\n");
             }
         }
@@ -210,6 +211,7 @@ public class Ide extends JFrame {
                 Files.write(file.toPath(), this.editor.getText().getBytes());
                 this.statusBar.setText(" Estado: Archivo guardado (" + file.getName() + ")");
             } catch (Exception ex) {
+                this.consola.setColor(new Color(255, 0, 0));
                 this.consola.append("\n[ERROR] No se pudo guardar el archivo.\n");
             }
         }
@@ -217,46 +219,60 @@ public class Ide extends JFrame {
 
     private void compilar() {
         this.consola.clear();
+        this.consola.setColor(new Color(200, 200, 200));
         this.statusBar.setText("Estado: Compilando...");
         String codigo = this.editor.getText();
 
+        this.analizadorLexico = new AnalizadorLexico();
+        Lexico lexer = new Lexico(new StringReader(codigo));
+        Symbol symbol;
+
+        this.consola.append("--- TOKENS RECONOCIDOS ---\n");
+
+        boolean hayError = false;
         try {
-            this.analizadorLexico = new AnalizadorLexico();
-            Lexico lexerParaTabla = new Lexico(new StringReader(codigo));
-            this.analizadorLexico.analizar(lexerParaTabla);
-
-            TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
-            String stringTabla = TablaSimbolosWriter.tablaToString(ts);
-
-            this.consola.append("--- TABLA DE SIMBOLOS ---\n");
-            this.consola.append(stringTabla);
-
-            // Autoguardado en docs/entrega1/ts.txt
-            try {
-                java.nio.file.Path dirPath = Paths.get("docs", "entrega1");
-                Files.createDirectories(dirPath);
-                Files.write(dirPath.resolve("ts.txt"), stringTabla.getBytes());
-                this.consola.append("\n[INFO] Tabla guardada automaticamente en docs/entrega1/ts.txt\n");
-            } catch (Exception ex) {
-                this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta docs/entrega1.\n");
+            while (true) {
+                try {
+                    symbol = lexer.next_token();
+                    if (symbol.sym == sym.EOF) {
+                        break;
+                    }
+                    String valor = (symbol.value != null) ? symbol.value.toString() : "-";
+                    this.consola.append("Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
+                    this.analizadorLexico.procesarToken(symbol);
+                } catch (Error e) {
+                    this.consola.setColor(new Color(255, 0, 0));
+                    this.consola.append("\n[ERROR LEXICO] " + e.getMessage() + "\n\n");
+                    hayError = true;
+                }
             }
-
-            this.consola.append("\n--- TOKENS RECONOCIDOS ---\n");
-            Lexico lexerParaImprimir = new Lexico(new StringReader(codigo));
-            Symbol symbol;
-
-            while ((symbol = lexerParaImprimir.next_token()).sym != sym.EOF) {
-                String valor = (symbol.value != null) ? symbol.value.toString() : "-";
-                this.consola.append("Token ID: " + symbol.sym + " | Valor: " + valor + "\n");
+            if (hayError) {
+                this.statusBar.setText("Estado: Error Lexico detectado");
+            } else {
+                this.statusBar.setText("Estado: Compilacion exitosa");
             }
-            this.statusBar.setText("Estado: Compilacion exitosa");
-
-        } catch (Error e) {
-            this.consola.append("\n[ERROR LEXICO] " + e.getMessage() + "\n");
-            this.statusBar.setText("Estado: Error Lexico detectado");
         } catch (Exception e) {
+            this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR SISTEMA] " + e.getMessage() + "\n");
             this.statusBar.setText("Estado: Error de Sistema");
+            hayError = true;
+        }
+
+        TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
+        String stringTabla = TablaSimbolosWriter.tablaToString(ts);
+
+        this.consola.append("\n--- TABLA DE SIMBOLOS ---\n");
+        this.consola.append(stringTabla);
+
+        // Autoguardado en docs/entrega1/ts.txt
+        try {
+            java.nio.file.Path dirPath = Paths.get("docs", "entrega1");
+            Files.createDirectories(dirPath);
+            Files.write(dirPath.resolve("ts.txt"), stringTabla.getBytes());
+            this.consola.append("\n[INFO] Tabla guardada automaticamente en docs/entrega1/ts.txt\n");
+        } catch (Exception ex) {
+            this.consola.setColor(new Color(255, 0, 0));
+            this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta docs/entrega1.\n");
         }
     }
 }

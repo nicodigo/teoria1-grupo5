@@ -1,6 +1,0 @@
-NOMBRE          | TOKEN      | TIPO       | VALOR      | LONG 
-resultado       | ID         |            | -          | -    
-2               | CTE_E      |            | 2          | 1    
-a               | ID         |            | -          | -    
-7               | CTE_E      |            | 7          | 1    
-9               | CTE_E      |            | 9          | 1    

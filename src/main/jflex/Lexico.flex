@@ -36,7 +36,7 @@ import java_cup.runtime.Symbol;
     private void validarString(String texto) {
         // yytext() incluye las comillas, por eso restamos 2
         if (texto.length() - 2 > 30) {
-            throw new Error("Error Lexico: El string supera los 30 caracteres en la linea " + yyline);
+            throw new Error("Error Lexico: El string supera los 30 caracteres en la linea " + (yyline + 1));
         }
     }
 
@@ -45,11 +45,11 @@ import java_cup.runtime.Symbol;
             int valor = Integer.parseInt(texto);
             // El valor máximo para un entero con signo de 16 bits es 32767
             if (valor > 32767) { 
-                throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + yyline);
+                throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + (yyline + 1));
             }
         } catch (NumberFormatException e) {
             // Si salta esta excepción, el número es tan grande que ni siquiera entra en un int normal
-            throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + yyline);
+            throw new Error("Error Lexico: El entero supera el limite de 16 bits en la linea " + (yyline + 1));
         }
     }
 
@@ -66,14 +66,13 @@ LETRA = [a-zA-Z]
 DIGITO = [0-9]
 ESPACIO = [ \t\f\n\r\n]+
 ID = {LETRA} ({LETRA}|{DIGITO}|_)*
-TEXTO_COMENT = !([^]* ("//*" | "*//") [^]*)
-COMENTARIO_INTERNO = "//*" {TEXTO_COMENT} "*//"
-COMENTARIO = "//*" ({TEXTO_COMENT} | {COMENTARIO_INTERNO})* "*//"
+CSC = [^/] | "/" [^/] | "//" [^*]
+COMENTARIO = "//*" {CSC}* ("//*" {CSC}* "*//")? {CSC}* "*//"
 
 /*Constantes*/
 CTE_E = {DIGITO}+
 CTE_F = ({DIGITO}+ "." {DIGITO}*) | ({DIGITO}* "." {DIGITO}+)
-CTE_STRING =  \"[^\"]*\"
+CTE_STRING = \"[^\"\n\r]*\"
 
 
 %%
@@ -127,6 +126,11 @@ CTE_STRING =  \"[^\"]*\"
 {CTE_F}              { validarReal32Bits(yytext());   return new Symbol(sym.CTE_F, yyline, yycolumn, yytext()); }
 {CTE_STRING}         { validarString(yytext());       return new Symbol(sym.CTE_STRING, yyline, yycolumn, yytext()); }
 {COMENTARIO}	{/* No se realiza accion por lo tanto se ignoran*/}
+
+/* Comentario abierto que nunca cierra: si el comentario cierra bien gana
+   la regla {COMENTARIO} de arriba, que matchea mas largo. */
+"//*"                { throw new Error("Error Lexico: comentario sin cerrar en la linea " + (yyline + 1)); }
+
 {ESPACIO}   { /* los espacios en blanco no generan token */ }
 
-[^]             { throw new Error("Caracter no permitido: <" + yytext() + "> en linea " + yyline); }
+[^]             { throw new Error("Caracter no permitido: <" + yytext() + "> en linea " + (yyline + 1)); }

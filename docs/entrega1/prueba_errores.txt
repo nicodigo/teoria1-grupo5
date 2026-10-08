@@ -1,0 +1,70 @@
+//* =======================================================================
+   CASOS DE ERROR LEXICO (token invalido)
+   ======================================================================= *//
+
+//* --- CASO 1: caracter fuera del alfabeto del lenguaje ---
+   Esperado: [ERROR LEXICO] Caracter no permitido: <#>
+*//
+a ::= b # c
+
+//* --- CASO 2: otro caracter no permitido ---
+   Esperado: [ERROR LEXICO] Caracter no permitido: <@>
+*//
+mail ::= @casa
+
+//* --- CASO 3: constante entera fuera del limite de 16 bits ---
+   32767 es el maximo valido; 32768 ya se pasa.
+   Esperado: [ERROR LEXICO] El entero supera el limite de 16 bits
+*//
+a ::= 32768
+
+//* --- CASO 4: constante entera gigante (ni entra en un int de Java) ---
+   Esperado: [ERROR LEXICO] El entero supera el limite de 16 bits
+*//
+a ::= 99999999999999999999
+
+//* --- CASO 5: constante real fuera del limite de 32 bits ---
+   Esperado: [ERROR LEXICO] El real supera el limite de 32 bits
+*//
+x ::= 999999999999999999999999999999999999999999999.9
+
+//* --- CASO 6: constante string de mas de 30 caracteres ---
+   La de abajo tiene 31. La de 30 esta mas arriba como caso valido.
+   Esperado: [ERROR LEXICO] El string supera los 30 caracteres
+*//
+mensaje ::= "abcdefghijklmnopqrstuvwxyz12345"
+
+//* --- CASO 7: constante string sin comilla de cierre ---
+   La comilla suelta no forma un CTE_STRING y cae como caracter invalido.
+   Esperado: [ERROR LEXICO] Caracter no permitido: <">
+*//
+nombre ::= "Naiara
+
+//* --- CASO 8: identificador que empieza con guion bajo ---
+   Un ID tiene que arrancar con letra.
+   Esperado: [ERROR LEXICO] Caracter no permitido: <_>
+*//
+_hola ::= 1
+
+//* --- CASO 9: signo = suelto (la asignacion del lenguaje es ::=) ---
+   Esperado: [ERROR LEXICO] Caracter no permitido: <=>
+*//
+a = 5
+
+//* --- CASO 10: comparacion con == (no existe en el lenguaje) ---
+   Esperado: [ERROR LEXICO] Caracter no permitido: <=>
+*//
+IF (a == b) {
+    WRITE("iguales");
+}
+
+//* --- CASO 11: asignacion simple := ---
+   Esperado: [ERROR LEXICO] Caracter no permitido: <:>
+*//
+a := 5
+
+//* --- CASO 12: comentario sin cerrar ---
+   Abrir un comentario y no cerrarlo nunca.
+   Esperado: [ERROR LEXICO] comentario sin cerrar en la linea N
+*//
+//* Comentario roto...

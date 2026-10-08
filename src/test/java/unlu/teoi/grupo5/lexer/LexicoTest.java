@@ -71,6 +71,14 @@ class LexicoTest {
     }
 
     @Test
+    void consumeStringsConUnSaltoDeLineaManual() throws Exception {
+        Lexico lexico = new Lexico(new StringReader("\"hola\\nmundo\\n\""));
+        Symbol token = lexico.next_token();
+        assertEquals(sym.CTE_STRING, token.sym);
+        assertEquals("\"hola\\nmundo\\n\"", token.value);
+    }
+
+    @Test
     void reconoceConstanteEnteraYReal() throws Exception {
         Lexico lexico = new Lexico(new StringReader("150 45.5"));
         assertEquals(sym.CTE_E, lexico.next_token().sym);

@@ -43,4 +43,8 @@ public class ConsolaPanel extends JPanel {
     public void clear() {
         this.textArea.setText("");
     }
+
+    public void setColor(Color color) {
+        textArea.setForeground(color);
+    }
 }

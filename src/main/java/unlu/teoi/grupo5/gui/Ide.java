@@ -197,6 +197,7 @@ public class Ide extends JFrame {
                 this.editor.setText(contenido);
                 this.statusBar.setText(" Estado: Archivo cargado (" + file.getName() + ")");
             } catch (Exception ex) {
+                this.consola.setColor(new Color(255, 0, 0));
                 this.consola.append("\n[ERROR] No se pudo leer el archivo.\n");
             }
         }
@@ -210,6 +211,7 @@ public class Ide extends JFrame {
                 Files.write(file.toPath(), this.editor.getText().getBytes());
                 this.statusBar.setText(" Estado: Archivo guardado (" + file.getName() + ")");
             } catch (Exception ex) {
+                this.consola.setColor(new Color(255, 0, 0));
                 this.consola.append("\n[ERROR] No se pudo guardar el archivo.\n");
             }
         }
@@ -217,6 +219,7 @@ public class Ide extends JFrame {
 
     private void compilar() {
         this.consola.clear();
+        this.consola.setColor(new Color(200, 200, 200));
         this.statusBar.setText("Estado: Compilando...");
         String codigo = this.editor.getText();
 
@@ -238,6 +241,7 @@ public class Ide extends JFrame {
                     this.consola.append("Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
                     this.analizadorLexico.procesarToken(symbol);
                 } catch (Error e) {
+                    this.consola.setColor(new Color(255, 0, 0));
                     this.consola.append("\n[ERROR LEXICO] " + e.getMessage() + "\n\n");
                     hayError = true;
                 }
@@ -248,6 +252,7 @@ public class Ide extends JFrame {
                 this.statusBar.setText("Estado: Compilacion exitosa");
             }
         } catch (Exception e) {
+            this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR SISTEMA] " + e.getMessage() + "\n");
             this.statusBar.setText("Estado: Error de Sistema");
             hayError = true;
@@ -266,6 +271,7 @@ public class Ide extends JFrame {
             Files.write(dirPath.resolve("ts.txt"), stringTabla.getBytes());
             this.consola.append("\n[INFO] Tabla guardada automaticamente en docs/entrega1/ts.txt\n");
         } catch (Exception ex) {
+            this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta docs/entrega1.\n");
         }
     }

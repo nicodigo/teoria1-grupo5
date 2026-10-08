@@ -72,7 +72,7 @@ COMENTARIO = "//*" {CSC}* ("//*" {CSC}* "*//")? {CSC}* "*//"
 /*Constantes*/
 CTE_E = {DIGITO}+
 CTE_F = ({DIGITO}+ "." {DIGITO}*) | ({DIGITO}* "." {DIGITO}+)
-CTE_STRING =  \"[^\"]*\"
+CTE_STRING = \"[^\"\n\r]*\"
 
 
 %%

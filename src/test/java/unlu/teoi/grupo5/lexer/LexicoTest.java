@@ -48,8 +48,6 @@ class LexicoTest {
         assertEquals(sym.EOF, lexico.next_token().sym);
     }
 
-
-
     @Test
     void reconoceIdentificador() throws Exception {
         Lexico lexico = new Lexico(new StringReader("variable_1"));

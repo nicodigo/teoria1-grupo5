@@ -1,41 +1,16 @@
 NOMBRE                              | TOKEN           | TIPO       | VALOR                               | LONG 
 a                                   | ID              |            | -                                   | -    
 b                                   | ID              |            | -                                   | -    
-contador                            | ID              |            | -                                   | -    
-x                                   | ID              |            | -                                   | -    
-y                                   | ID              |            | -                                   | -    
-promedio                            | ID              |            | -                                   | -    
-nombre                              | ID              |            | -                                   | -    
-mensaje                             | ID              |            | -                                   | -    
-resultado                           | ID              |            | -                                   | -    
-var_1                               | ID              |            | -                                   | -    
-var2                                | ID              |            | -                                   | -    
-0                                   | CTE_E           |            | 0                                   | -    
-32767                               | CTE_E           |            | 32767                               | -    
-100                                 | CTE_E           |            | 100                                 | -    
-3.14                                | CTE_F           |            | 3.14                                | -    
-.5                                  | CTE_F           |            | .5                                  | -    
-5.                                  | CTE_F           |            | 5.                                  | -    
-"Naiara"                            | CTE_STRING      |            | Naiara                              | 6    
-"abcdefghijklmnopqrstuvwxyz1234"    | CTE_STRING      |            | abcdefghijklmnopqrstuvwxyz1234      | 30   
-2                                   | CTE_E           |            | 2                                   | -    
-4                                   | CTE_E           |            | 4                                   | -    
-1                                   | CTE_E           |            | 1                                   | -    
-"mayor o igual"                     | CTE_STRING      |            | mayor o igual                       | 13   
-"menor"                             | CTE_STRING      |            | menor                               | 5    
-"menor o igual"                     | CTE_STRING      |            | menor o igual                       | 13   
-"distinto"                          | CTE_STRING      |            | distinto                            | 8    
-"menor estricto"                    | CTE_STRING      |            | menor estricto                      | 14   
-"ambos positivos"                   | CTE_STRING      |            | ambos positivos                     | 15   
-10                                  | CTE_E           |            | 10                                  | -    
-3                                   | CTE_E           |            | 3                                   | -    
-5                                   | CTE_E           |            | 5                                   | -    
-6                                   | CTE_E           |            | 6                                   | -    
-7                                   | CTE_E           |            | 7                                   | -    
-9                                   | CTE_E           |            | 9                                   | -    
 c                                   | ID              |            | -                                   | -    
 mail                                | ID              |            | -                                   | -    
 casa                                | ID              |            | -                                   | -    
-iguales                             | ID              |            | -                                   | -    
+x                                   | ID              |            | -                                   | -    
+mensaje                             | ID              |            | -                                   | -    
+nombre                              | ID              |            | -                                   | -    
+Naiara                              | ID              |            | -                                   | -    
+hola                                | ID              |            | -                                   | -    
+1                                   | CTE_E           |            | 1                                   | -    
+5                                   | CTE_E           |            | 5                                   | -    
+"iguales"                           | CTE_STRING      |            | iguales                             | 7    
 Comentario                          | ID              |            | -                                   | -    
 roto                                | ID              |            | -                                   | -    

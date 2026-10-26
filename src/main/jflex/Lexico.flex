@@ -91,6 +91,7 @@ CTE_STRING = \"[^\"\n\r]*\"
 /* Operadores Lógicos y Relacionales */
 "AND"                { return new Symbol(sym.AND, yyline, yycolumn, yytext()); }
 "OR"                 { return new Symbol(sym.OR, yyline, yycolumn, yytext()); }
+"=="                 { return new Symbol(sym.IGUAL, yyline, yycolumn, yytext()); }
 ">="                 { return new Symbol(sym.MAYORIGUAL, yyline, yycolumn, yytext()); }
 "<="                 { return new Symbol(sym.MENORIGUAL, yyline, yycolumn, yytext()); }
 "!="                 { return new Symbol(sym.DISTINTO, yyline, yycolumn, yytext()); }

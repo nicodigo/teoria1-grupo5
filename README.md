@@ -9,7 +9,8 @@ Tema especial asignado: **SUMAIMPAR**.
 > La infraestructura del analizador sintáctico (JAVA CUP) ya está configurada
 > para la entrega 2 (23/11/26): el pipeline compila, falta escribir la gramática.
 
-- **Integrantes**: Abril Nadia Babino, Naiara Agustina Collazo, Nicolás Guillermo Huici, María Agustina Ortiz, Dante Juan Terranova.
+- **Integrantes**: Abril Nadia Babino, Naiara Agustina Collazo, Nicolás Guillermo Huici.
+
 - **Consigna**: [`Consigna.md`](Consigna.md)
 
 ## Tecnologías y versiones

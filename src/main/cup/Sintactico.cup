@@ -17,6 +17,22 @@
 // ============================================================================
 
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.List;
+
+parser code
+{:
+    /**Metodo al que se llama automaticamente ante algun error sintactico.*/
+    public void syntax_error(Symbol s){
+        System.out.println("Error en la linea " + (s.right+1) + " columna " + s.left + ". "
+            + s + " no reconocido. valor " + s.value );
+    }
+
+:}
+
+action code
+{:
+:}
 
 /* Palabras reservadas */
 terminal String DECLARE_SECTION, ENDDECLARE_SECTION, PROGRAM_SECTION, ENDPROGRAM_SECTION;
@@ -38,8 +54,183 @@ terminal String PUNTOYCOMA, COMA;
 /* Variables y Constantes */
 terminal String ID, CTE_STRING, CTE_E, CTE_F;
 
-/* No terminal inicial (placeholder para que compile) */
-non terminal Object programa;
+/* No terminal inicial */
+non terminal programa, seccion_declaracion, seccion_programa;
+non terminal lista_declaraciones, declaracion, lista_decl, tipo;
+non terminal lista_sentencias, sentencia, asignacion, salida, seleccion, iteracion;
+non terminal expresion, termino, factor;
+non terminal condicion, comparacion, op_comparacion;
+non terminal sumaimpar, lista_constantes, lista_enteros;
 
-/* Producción vacía: no evaluamos sintaxis en la Entrega 1 */
-programa ::= ;
+start with programa;
+
+programa ::=
+      seccion_declaracion seccion_programa
+        {: System.out.println("programa -> seccion_declaracion seccion_programa"); :}
+    ;
+
+seccion_declaracion ::=
+      DECLARE_SECTION lista_declaraciones ENDDECLARE_SECTION
+        {: System.out.println("seccion_declaracion -> DECLARE_SECTION lista_declaraciones ENDDECLARE_SECTION"); :}
+    ;
+
+lista_declaraciones ::=
+      lista_declaraciones declaracion
+        {: System.out.println("lista_declaraciones -> lista_declaraciones declaracion"); :}
+    | declaracion
+        {: System.out.println("lista_declaraciones -> declaracion"); :}
+    ;
+
+declaracion ::=
+      CORCHETEA lista_decl CORCHETEC
+        {: System.out.println("declaracion -> CORCHETEA lista_decl CORCHETEC"); :}
+    ;
+
+lista_decl ::=
+      ID CORCHETEC ASIGNACION CORCHETEA tipo
+        {: System.out.println("lista_decl -> ID CORCHETEC ASIGNACION CORCHETEA tipo"); :}
+    | ID COMA lista_decl COMA tipo
+        {: System.out.println("lista_decl -> ID COMA lista_decl COMA tipo"); :}
+    ;
+
+tipo ::=
+      FLOAT
+        {: System.out.println("tipo -> FLOAT"); :}
+    | INT
+        {: System.out.println("tipo -> INT"); :}
+    | STRING
+        {: System.out.println("tipo -> STRING"); :}
+    ;
+
+seccion_programa ::=
+      PROGRAM_SECTION lista_sentencias ENDPROGRAM_SECTION
+        {: System.out.println("seccion_programa -> PROGRAM_SECTION lista_sentencias ENDPROGRAM_SECTION"); :}
+    ;
+
+lista_sentencias ::=
+      lista_sentencias sentencia
+        {: System.out.println("lista_sentencias -> lista_sentencias sentencia"); :}
+    | sentencia
+        {: System.out.println("lista_sentencias -> sentencia"); :}
+    ;
+
+sentencia ::=
+      asignacion PUNTOYCOMA
+        {: System.out.println("sentencia -> asignacion PUNTOYCOMA"); :}
+    | salida PUNTOYCOMA
+        {: System.out.println("sentencia -> salida PUNTOYCOMA"); :}
+    | seleccion
+        {: System.out.println("sentencia -> seleccion"); :}
+    | iteracion
+        {: System.out.println("sentencia -> iteracion"); :}
+    ;
+
+asignacion ::=
+      ID ASIGNACION expresion
+        {: System.out.println("asignacion -> ID ASIGNACION expresion"); :}
+    | ID ASIGNACION CTE_STRING
+        {: System.out.println("asignacion -> ID ASIGNACION CTE_STRING"); :}
+    ;
+
+expresion ::=
+      expresion SUMA termino
+        {: System.out.println("expresion -> expresion SUMA termino"); :}
+    | expresion RESTA termino
+        {: System.out.println("expresion -> expresion RESTA termino"); :}
+    | termino
+        {: System.out.println("expresion -> termino"); :}
+    ;
+
+termino ::= 
+      termino MULTIPLICACION factor
+        {: System.out.println("termino -> termino MULTIPLICACION factor"); :}
+    | termino DIVISION factor
+        {: System.out.println("termino -> termino DIVISION factor"); :}
+    | factor
+        {: System.out.println("termino -> factor"); :}
+    ;
+
+factor ::=
+      ID
+        {: System.out.println("factor -> ID"); :}
+    | CTE_E
+        {: System.out.println("factor -> CTE_E"); :}
+    | CTE_F
+        {: System.out.println("factor -> CTE_F"); :}
+    | PARA expresion PARC
+        {: System.out.println("factor -> PARA expresion PARC"); :}
+    | sumaimpar
+        {: System.out.println("factor -> sumaimpar"); :}
+    ;
+
+salida ::=
+      WRITE ID
+        {: System.out.println("salida -> WRITE ID"); :}
+    | WRITE CTE_STRING
+        {: System.out.println("salida -> WRITE CTE_STRING"); :}
+    | WRITE CTE_E
+        {: System.out.println("salida -> WRITE CTE_E"); :}
+    | WRITE CTE_F
+        {: System.out.println("salida -> WRITE CTE_F"); :}
+    ;
+
+seleccion ::=
+      IF PARA condicion PARC LLAVEA lista_sentencias LLAVEC
+        {: System.out.println("seleccion -> IF PARA condicion PARC LLAVEA lista_sentencias LLAVEC"); :}
+    | IF PARA condicion PARC LLAVEA lista_sentencias LLAVEC ELSE LLAVEA lista_sentencias LLAVEC
+        {: System.out.println("seleccion -> IF PARA condicion PARC LLAVEA lista_sentencias LLAVEC ELSE LLAVEA lista_sentencias LLAVEC"); :}
+    ;
+
+iteracion ::=
+      WHILE PARA condicion PARC LLAVEA lista_sentencias LLAVEC
+        {: System.out.println("iteracion -> WHILE PARA condicion PARC LLAVEA lista_sentencias LLAVEC"); :}
+    ;
+
+condicion ::=
+      comparacion
+        {: System.out.println("condicion -> comparacion"); :}
+    | comparacion AND comparacion
+        {: System.out.println("condicion -> comparacion AND comparacion"); :}
+    | comparacion OR comparacion
+        {: System.out.println("condicion -> comparacion OR comparacion"); :}
+    ;
+
+comparacion ::=
+      expresion op_comparacion expresion
+        {: System.out.println("comparacion -> expresion op_comparacion expresion"); :}
+    ;
+
+op_comparacion ::=
+      MAYOR
+        {: System.out.println("op_comparacion -> MAYOR"); :}
+    | MENOR
+        {: System.out.println("op_comparacion -> MENOR"); :}
+    | MAYORIGUAL
+        {: System.out.println("op_comparacion -> MAYORIGUAL"); :}
+    | MENORIGUAL
+        {: System.out.println("op_comparacion -> MENORIGUAL"); :}
+    | DISTINTO
+        {: System.out.println("op_comparacion -> DISTINTO"); :}
+    | IGUAL
+        {: System.out.println("op_comparacion -> IGUAL"); :}
+    ;
+
+sumaimpar ::=
+      SUMAIMPAR PARA CTE_E PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC
+        {: System.out.println("sumaimpar -> SUMAIMPAR PARA CTE_E PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC"); :}
+    ;
+
+lista_constantes ::=
+      /* lambda */
+        {: System.out.println("lista_constantes -> lambda"); :}
+    | lista_enteros
+        {: System.out.println("lista_constantes -> lista_enteros"); :}
+    ;
+
+lista_enteros ::=
+      lista_enteros COMA CTE_E
+        {: System.out.println("lista_enteros -> lista_enteros COMA CTE_E"); :}
+    | CTE_E
+        {: System.out.println("lista_enteros -> CTE_E"); :}
+    ;
+

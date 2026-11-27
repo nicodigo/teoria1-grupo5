@@ -26,7 +26,7 @@ terminal String SUMAIMPAR;
 
 /* Operadores Lógicos y Relacionales */
 terminal String AND, OR;
-terminal String MENOR, MAYOR, MAYORIGUAL, MENORIGUAL, DISTINTO;
+terminal String MENOR, MAYOR, MAYORIGUAL, MENORIGUAL, DISTINTO, IGUAL;
 
 /* Operadores Matemáticos y Asignación */
 terminal String ASIGNACION, SUMA, RESTA, DIVISION, MULTIPLICACION;

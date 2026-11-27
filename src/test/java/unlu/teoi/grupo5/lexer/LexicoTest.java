@@ -85,6 +85,14 @@ class LexicoTest {
         assertEquals(sym.CTE_F, lexico.next_token().sym);
     }
 
+    @Test
+    void reconoceOperadorIgual() throws Exception {
+        Lexico lexico = new Lexico(new StringReader("=="));
+        Symbol token = lexico.next_token();
+        assertEquals(sym.IGUAL, token.sym);
+        assertEquals("==", token.value);
+    }
+
     // ========================================================================
     // CASOS DE ERROR LEXICO (token invalido)
     //
@@ -187,11 +195,6 @@ class LexicoTest {
     void signoIgualSoloNoEsUnToken() {
         // La asignacion del lenguaje es "::=", no "="
         assertErrorLexico("a = b", "Caracter no permitido");
-    }
-
-    @Test
-    void dobleIgualNoEsUnToken() {
-        assertErrorLexico("IF (a == b)", "Caracter no permitido");
     }
 
     // ========================================================================

@@ -20,11 +20,7 @@ import java_cup.runtime.Symbol;
 %class Lexico
 %public
 %unicode
-/* Modo CUP: el lexer implementa java_cup.runtime.Scanner, escanea con
-   next_token() y devuelve java_cup.runtime.Symbol. Los tokens se crean con
-   new java_cup.runtime.Symbol(sym.X, ...) usando la interfaz sym generada
-   por CUP (ver src/main/cup/Sintactico.cup); el EOF se maneja solo
-   (new Symbol(sym.EOF)). */
+
 %cupsym unlu.teoi.grupo5.parser.sym
 %cup
 %line
@@ -95,6 +91,7 @@ CTE_STRING = \"[^\"\n\r]*\"
 /* Operadores Lógicos y Relacionales */
 "AND"                { return new Symbol(sym.AND, yyline, yycolumn, yytext()); }
 "OR"                 { return new Symbol(sym.OR, yyline, yycolumn, yytext()); }
+"=="                 { return new Symbol(sym.IGUAL, yyline, yycolumn, yytext()); }
 ">="                 { return new Symbol(sym.MAYORIGUAL, yyline, yycolumn, yytext()); }
 "<="                 { return new Symbol(sym.MENORIGUAL, yyline, yycolumn, yytext()); }
 "!="                 { return new Symbol(sym.DISTINTO, yyline, yycolumn, yytext()); }

@@ -19,6 +19,9 @@ public class AnalizadorLexico {
 
         do {
             symbol = lexico.next_token();
+            if (symbol.sym == sym.error) {
+                throw new Error("Token no reconocido en la linea " + (symbol.left + 1));
+            }
             procesarToken(symbol);
         } while (symbol.sym != sym.EOF);
 

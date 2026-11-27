@@ -91,7 +91,11 @@ public class Ide extends JFrame {
 
         this.btnCargar.addActionListener(e -> cargarArchivo());
         this.btnGuardar.addActionListener(e -> guardarArchivo());
-        this.btnLimpiar.addActionListener(e -> this.consola.clear());
+        this.btnLimpiar.addActionListener(e -> {
+            this.consola.clear();
+            this.consola.setColor(new Color(200, 200, 200));
+            this.statusBar.setText(" Estado: Listo");
+        });
         this.btnCompilar.addActionListener(e -> compilar());
 
         this.statusBar = new JLabel(" Estado: Listo");
@@ -220,7 +224,7 @@ public class Ide extends JFrame {
     private void compilar() {
         this.consola.clear();
         this.consola.setColor(new Color(200, 200, 200));
-        this.statusBar.setText("Estado: Compilando...");
+        this.statusBar.setText(" Estado: Compilando...");
         String codigo = this.editor.getText();
 
         this.analizadorLexico = new AnalizadorLexico();
@@ -229,34 +233,37 @@ public class Ide extends JFrame {
 
         this.consola.append("--- TOKENS RECONOCIDOS ---\n");
 
-        boolean hayError = false;
         try {
             while (true) {
-                try {
-                    symbol = lexer.next_token();
-                    if (symbol.sym == sym.EOF) {
-                        break;
-                    }
-                    String valor = (symbol.value != null) ? symbol.value.toString() : "-";
-                    this.consola.append("Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
-                    this.analizadorLexico.procesarToken(symbol);
-                } catch (Error e) {
-                    this.consola.setColor(new Color(255, 0, 0));
-                    this.consola.append("\n[ERROR LEXICO] " + e.getMessage() + "\n\n");
-                    hayError = true;
+                symbol = lexer.next_token();
+                if (symbol.sym == sym.EOF) {
+                    break;
                 }
+                if (symbol.sym == sym.error) {
+                    throw new Error("Token no reconocido en la linea " + (symbol.left + 1));
+                }
+                String valor = (symbol.value != null) ? symbol.value.toString() : "-";
+                this.consola.append(
+                        "Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
+                this.analizadorLexico.procesarToken(symbol);
             }
-            if (hayError) {
-                this.statusBar.setText("Estado: Error Lexico detectado");
-            } else {
-                this.statusBar.setText("Estado: Compilacion exitosa");
+        } catch (Error e) {
+            this.consola.setColor(new Color(255, 0, 0));
+            String msg = e.getMessage();
+            if (msg != null && msg.startsWith("Error Lexico: ")) {
+                msg = msg.substring("Error Lexico: ".length());
             }
+            this.consola.append("\n[ERROR LEXICO] " + msg + "\n");
+            this.statusBar.setText(" Estado: Error Lexico detectado - Compilacion interrumpida");
+            return;
         } catch (Exception e) {
             this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR SISTEMA] " + e.getMessage() + "\n");
-            this.statusBar.setText("Estado: Error de Sistema");
-            hayError = true;
+            this.statusBar.setText(" Estado: Error de Sistema");
+            return;
         }
+
+        this.statusBar.setText(" Estado: Compilacion exitosa");
 
         TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
         String stringTabla = TablaSimbolosWriter.tablaToString(ts);

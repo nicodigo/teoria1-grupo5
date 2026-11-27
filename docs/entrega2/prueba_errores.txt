@@ -1,0 +1,59 @@
+//* prueba_errores.txt - Pruebas de errores sintácticos y semánticos (Entrega 2) *//
+//* Grupo 5 - tema especial: SUMAIMPAR *//
+
+DECLARE.SECTION
+    [a, b] ::= [INT, INT]
+    [x] ::= [FLOAT]
+    [texto] ::= [STRING]
+
+    //* [ERROR SEMÁNTICO 1] Variable declarada dos veces *//
+    [a] ::= [FLOAT]
+
+    //* [ERROR SINTÁCTICO 1] Distinta cantidad de variables que de tipos (descomentar para probar) *//
+    //* [c, d] ::= [INT] *//
+ENDDECLARE.SECTION
+
+PROGRAM.SECTION
+
+    //* --- ERRORES SEMÁNTICOS --- *//
+
+    //* [ERROR SEMÁNTICO 2] Variable no declarada *//
+    noDeclarada ::= 10;
+
+    //* [ERROR SEMÁNTICO 3] Tipos incompatibles: asignar string a variable numérica *//
+    a ::= "hola";
+
+    //* [ERROR SEMÁNTICO 4] Tipos incompatibles: asignar expresión numérica a variable string *//
+    texto ::= 5 + 3;
+
+    //* [ERROR SEMÁNTICO 5] Operación aritmética con variable string *//
+    b ::= texto + 1;
+
+    //* [ERROR SEMÁNTICO 6] WRITE con variable string (solo admite variables numéricas) *//
+    WRITE texto;
+
+    //* [ERROR SEMÁNTICO 7] SUMAIMPAR con pivot menor a 1 *//
+    a ::= SUMAIMPAR(0; [1, 3, 5]);
+
+    //* [ERROR SEMÁNTICO 8] SUMAIMPAR con constante no positiva (0) en la lista *//
+    a ::= SUMAIMPAR(2; [0, 3, 5]);
+
+
+    //* --- ERRORES SINTÁCTICOS (descomentar de a uno para probar) --- *//
+
+    //* [ERROR SINTÁCTICO 2] Falta punto y coma al final de la asignación *//
+    //* a ::= 10 *//
+
+    //* [ERROR SINTÁCTICO 3] WRITE con paréntesis (no coincide con la gramática) *//
+    //* WRITE(a); *//
+
+    //* [ERROR SINTÁCTICO 4] Más de un conector lógico en una condición *//
+    //* IF (a > 0 AND b > 0 OR x > 1.0) { WRITE a; } *//
+
+    //* [ERROR SINTÁCTICO 5] SUMAIMPAR con variable en la lista (solo acepta constantes enteras) *//
+    //* a ::= SUMAIMPAR(2; [a, 7, 9]); *//
+
+    //* [ERROR SINTÁCTICO 6] Estructura IF sin llaves *//
+    //* IF (a == b) WRITE a; *//
+
+ENDPROGRAM.SECTION

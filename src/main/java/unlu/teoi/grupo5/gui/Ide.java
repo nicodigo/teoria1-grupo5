@@ -8,7 +8,9 @@ import java.awt.Font;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.swing.BorderFactory;
@@ -25,6 +27,7 @@ import javax.swing.border.TitledBorder;
 import java_cup.runtime.Symbol;
 import unlu.teoi.grupo5.lexer.AnalizadorLexico;
 import unlu.teoi.grupo5.lexer.Lexico;
+import unlu.teoi.grupo5.parser.Parser;
 import unlu.teoi.grupo5.parser.sym;
 import unlu.teoi.grupo5.tablasimbolos.TablaSimbolos;
 import unlu.teoi.grupo5.tablasimbolos.TablaSimbolosWriter;
@@ -35,6 +38,9 @@ public class Ide extends JFrame {
     private static final Color COLOR_BOTON_HOVER = new Color(28, 151, 234);
     private static final Font FUENTE_BOTON = new Font("Segoe UI", Font.BOLD, 14);
 
+    /** Carpeta de entregables de la entrega vigente (se escribe ts.txt ahi). */
+    private static final Path DIRECTORIO_ENTREGA = Paths.get("docs", "entrega2");
+
     private EditorPanel editor;
     private ConsolaPanel consola;
     private JButton btnCompilar;
@@ -43,6 +49,7 @@ public class Ide extends JFrame {
     private JButton btnGuardar;
     private JLabel statusBar;
     private AnalizadorLexico analizadorLexico;
+    private Parser parserSintactico;
 
     public Ide() {
         setTitle("Compilador - Grupo 5");
@@ -227,15 +234,18 @@ public class Ide extends JFrame {
         this.statusBar.setText(" Estado: Compilando...");
         String codigo = this.editor.getText();
 
-        this.analizadorLexico = new AnalizadorLexico();
-        Lexico lexer = new Lexico(new StringReader(codigo));
+        // Una tabla por compilacion: la comparten el lexico (registra simbolos)
+        // y el parser (asigna el TIPO al procesar DECLARE.SECTION).
+        TablaSimbolos tablaSimbolos = new TablaSimbolos();
+        this.analizadorLexico = new AnalizadorLexico(new Lexico(new StringReader(codigo)), tablaSimbolos);
+        this.parserSintactico = new Parser(this.analizadorLexico, tablaSimbolos);
         Symbol symbol;
 
         this.consola.append("--- TOKENS RECONOCIDOS ---\n");
 
         try {
             while (true) {
-                symbol = lexer.next_token();
+                symbol = this.analizadorLexico.next_token();
                 if (symbol.sym == sym.EOF) {
                     break;
                 }
@@ -245,7 +255,7 @@ public class Ide extends JFrame {
                 String valor = (symbol.value != null) ? symbol.value.toString() : "-";
                 this.consola.append(
                         "Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
-                this.analizadorLexico.procesarToken(symbol);
+                // El adaptador ya registro el simbolo en la tabla al leerlo.
             }
         } catch (Error e) {
             this.consola.setColor(new Color(255, 0, 0));
@@ -263,6 +273,9 @@ public class Ide extends JFrame {
             return;
         }
 
+        // Entrega 2: cuando Sintactico.cup tenga la gramatica, el analisis
+        // sintactico se dispara con this.parserSintactico.parse(); la tabla ya
+        // esta conectada, solo falta la gramatica.
         this.statusBar.setText(" Estado: Compilacion exitosa");
 
         TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
@@ -271,15 +284,15 @@ public class Ide extends JFrame {
         this.consola.append("\n--- TABLA DE SIMBOLOS ---\n");
         this.consola.append(stringTabla);
 
-        // Autoguardado en docs/entrega1/ts.txt
+        // Autoguardado en docs/entrega2/ts.txt (la carpeta se crea si no existe)
         try {
-            java.nio.file.Path dirPath = Paths.get("docs", "entrega1");
-            Files.createDirectories(dirPath);
-            Files.write(dirPath.resolve("ts.txt"), stringTabla.getBytes());
-            this.consola.append("\n[INFO] Tabla guardada automaticamente en docs/entrega1/ts.txt\n");
+            Files.createDirectories(DIRECTORIO_ENTREGA);
+            Files.write(DIRECTORIO_ENTREGA.resolve("ts.txt"), stringTabla.getBytes(StandardCharsets.UTF_8));
+            this.consola.append("\n[INFO] Tabla guardada automaticamente en "
+                    + DIRECTORIO_ENTREGA.resolve("ts.txt") + "\n");
         } catch (Exception ex) {
             this.consola.setColor(new Color(255, 0, 0));
-            this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta docs/entrega1.\n");
+            this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta " + DIRECTORIO_ENTREGA + ".\n");
         }
     }
 }

@@ -32,6 +32,48 @@ parser code
 
 action code
 {:
+import unlu.teoi.grupo5.tablasimbolos.TablaSimbolos;
+import unlu.teoi.grupo5.tablasimbolos.Tipo;
+
+/* ----------------------------------------------------------------------------
+ * Parser code: conexion con la tabla de simbolos.
+ *
+ * CUP 0.11b exige que este bloque vaya ANTES de los terminal/non terminal;
+ * si se mueve mas abajo, la generacion falla con "Syntax error @ Symbol:
+ * PARSER". Solo puede haber un bloque parser code: si se agrega un segundo,
+ * CUP lo descarta con el warning "Redundant parser code (skipping)".
+ * Agregar imports y helpers DENTRO de este bloque.
+ *
+ * La tabla se inyecta por constructor porque la crea la GUI una vez por
+ * compilacion y la comparten el lexer y el parser. La gramatica solo tiene que
+ * llamar a asignarTipo(...) desde las acciones de DECLARE.SECTION.
+ * --------------------------------------------------------------------------*/
+parser code {: 
+  // No puede ser final: CUP tambien genera constructores que no la inicializan.
+  private TablaSimbolos tablaSimbolos;
+
+  public Parser(java_cup.runtime.Scanner scanner, TablaSimbolos tablaSimbolos) {
+    super(scanner);
+    if (tablaSimbolos == null) {
+      throw new IllegalArgumentException("La tabla de simbolos no puede ser null");
+    }
+    this.tablaSimbolos = tablaSimbolos;
+  }
+
+  public TablaSimbolos getTablaSimbolos() {
+    return tablaSimbolos;
+  }
+
+  /** Asigna el tipo a una variable ya registrada por el lexico. */
+  public void asignarTipo(String nombre, Tipo tipo) {
+    tablaSimbolos.asignarTipo(nombre, tipo);
+  }
+
+  /** Igual que el anterior, aceptando el texto del token ("INT", "FLOAT", "STRING"). */
+  public void asignarTipo(String nombre, String tipoTexto) {
+    tablaSimbolos.asignarTipo(nombre, Tipo.desdeTexto(tipoTexto));
+  }
+>>>>>>> aa35953 (agrego tipo a ts.txt)
 :}
 
 /* Palabras reservadas */

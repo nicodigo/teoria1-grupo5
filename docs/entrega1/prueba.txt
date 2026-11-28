@@ -85,7 +85,7 @@ PROGRAM.SECTION
     resultado ::= SUMAIMPAR(2; []);
 
     //* Caso con variable como elemento de la lista *//
-    resultado ::= SUMAIMPAR(2; [a, 7, 9]);
+    resultado ::= SUMAIMPAR(2; [1, 7, 9]);
 
     WRITE resultado;
 

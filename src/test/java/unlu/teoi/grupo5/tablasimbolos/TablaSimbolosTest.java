@@ -105,4 +105,55 @@ class TablaSimbolosTest {
         parser.asignarTipo("a1", "STRING");
         assertEquals(Tipo.STRING, ts.buscar("a1").getTipo());
     }
+
+    @Test
+    void laGramaticaAsignaCadaTipoALaVariableQueLeCorresponde() throws Exception {
+        // Tipos distintos a proposito: con listas homogeneas un pareo invertido
+        // pasaria inadvertido.
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a, b, c] ::= [INT, FLOAT, STRING]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    a ::= 1;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        TablaSimbolos ts = parsear(fuente);
+
+        assertEquals(Tipo.INT, ts.buscar("a").getTipo());
+        assertEquals(Tipo.FLOAT, ts.buscar("b").getTipo());
+        assertEquals(Tipo.STRING, ts.buscar("c").getTipo());
+    }
+
+    @Test
+    void unaDeclaracionDesbalanceadaNoAsignaTipos() throws Exception {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a, b] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    a ::= 1;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        TablaSimbolos ts = parsear(fuente);
+
+        assertNull(ts.buscar("a").getTipo());
+        assertNull(ts.buscar("b").getTipo());
+    }
+
+    /**
+     * Parsea con las trazas de la gramatica silenciadas, para no ensuciar la
+     * salida de los tests con las reglas que imprime Sintactico.cup.
+     */
+    private static TablaSimbolos parsear(String fuente) throws Exception {
+        TablaSimbolos ts = new TablaSimbolos();
+        Parser parser = new Parser(new AnalizadorLexico(new Lexico(new StringReader(fuente)), ts), ts);
+
+        java.io.PrintStream original = System.out;
+        System.setOut(new java.io.PrintStream(java.io.OutputStream.nullOutputStream()));
+        try {
+            parser.parse();
+        } finally {
+            System.setOut(original);
+        }
+        return ts;
+    }
 }

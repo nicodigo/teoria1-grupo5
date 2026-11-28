@@ -6,7 +6,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FlowLayout;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,11 +27,9 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import java_cup.runtime.Symbol;
 import unlu.teoi.grupo5.lexer.AnalizadorLexico;
 import unlu.teoi.grupo5.lexer.Lexico;
 import unlu.teoi.grupo5.parser.Parser;
-import unlu.teoi.grupo5.parser.sym;
 import unlu.teoi.grupo5.tablasimbolos.TablaSimbolos;
 import unlu.teoi.grupo5.tablasimbolos.TablaSimbolosWriter;
 
@@ -235,29 +236,26 @@ public class Ide extends JFrame {
         String codigo = this.editor.getText();
 
         // Una tabla por compilacion: la comparten el lexico (registra simbolos)
-        // y el parser (asigna el TIPO al procesar DECLARE.SECTION).
+        // y el parser (asigna el TIPO al reducir DECLARE.SECTION).
         TablaSimbolos tablaSimbolos = new TablaSimbolos();
         this.analizadorLexico = new AnalizadorLexico(new Lexico(new StringReader(codigo)), tablaSimbolos);
         this.parserSintactico = new Parser(this.analizadorLexico, tablaSimbolos);
-        Symbol symbol;
 
-        this.consola.append("--- TOKENS RECONOCIDOS ---\n");
+        // Las acciones de Sintactico.cup imprimen las reglas con System.out; se
+        // redirige a la consola del IDE mientras dura el analisis sintactico.
+        PrintStream salidaOriginal = System.out;
+        PrintStream salidaConsola = new PrintStream(new ConsolaOutputStream(), true, StandardCharsets.UTF_8);
+        System.setOut(salidaConsola);
 
+        this.consola.append("--- ANALISIS SINTACTICO ---\n");
+        boolean exito = true;
         try {
-            while (true) {
-                symbol = this.analizadorLexico.next_token();
-                if (symbol.sym == sym.EOF) {
-                    break;
-                }
-                if (symbol.sym == sym.error) {
-                    throw new Error("Token no reconocido en la linea " + (symbol.left + 1));
-                }
-                String valor = (symbol.value != null) ? symbol.value.toString() : "-";
-                this.consola.append(
-                        "Token ID: " + symbol.sym + " | Valor: " + valor + " | Linea: " + (symbol.left + 1) + "\n");
-                // El adaptador ya registro el simbolo en la tabla al leerlo.
-            }
+            // El parser consume el lexico a traves del adaptador: no hay que
+            // recorrer los tokens antes, o el parser arrancaria en EOF.
+            this.parserSintactico.parse();
         } catch (Error e) {
+            // Errores lexicos que Lexico.flex lanza al validar constantes.
+            exito = false;
             this.consola.setColor(new Color(255, 0, 0));
             String msg = e.getMessage();
             if (msg != null && msg.startsWith("Error Lexico: ")) {
@@ -265,17 +263,23 @@ public class Ide extends JFrame {
             }
             this.consola.append("\n[ERROR LEXICO] " + msg + "\n");
             this.statusBar.setText(" Estado: Error Lexico detectado - Compilacion interrumpida");
-            return;
         } catch (Exception e) {
+            // Errores sintacticos: CUP no puede recuperarse del primer error.
+            exito = false;
             this.consola.setColor(new Color(255, 0, 0));
-            this.consola.append("\n[ERROR SISTEMA] " + e.getMessage() + "\n");
-            this.statusBar.setText(" Estado: Error de Sistema");
+            this.consola.append("\n[ERROR SINTACTICO] " + e.getMessage() + "\n");
+            this.statusBar.setText(" Estado: Error Sintactico detectado - Compilacion interrumpida");
+        } finally {
+            salidaConsola.flush();
+            System.setOut(salidaOriginal);
+        }
+
+        if (!exito) {
+            // Igual criterio que con los errores lexicos: si la compilacion se
+            // interrumpe, no se sobreescribe el ts.txt de la entrega.
             return;
         }
 
-        // Entrega 2: cuando Sintactico.cup tenga la gramatica, el analisis
-        // sintactico se dispara con this.parserSintactico.parse(); la tabla ya
-        // esta conectada, solo falta la gramatica.
         this.statusBar.setText(" Estado: Compilacion exitosa");
 
         TablaSimbolos ts = analizadorLexico.getTablaSimbolos();
@@ -293,6 +297,37 @@ public class Ide extends JFrame {
         } catch (Exception ex) {
             this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR] No se pudo guardar ts.txt en la carpeta " + DIRECTORIO_ENTREGA + ".\n");
+        }
+    }
+
+    /**
+     * Vuelca en el panel de salida lo que el parser escribe en {@code System.out}.
+     * Acumula bytes hasta el salto de linea para no cortar una regla al medio.
+     */
+    private final class ConsolaOutputStream extends OutputStream {
+
+        private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        @Override
+        public void write(int b) {
+            if (b == '\n') {
+                volcarLinea();
+            } else if (b != '\r') {
+                buffer.write(b);
+            }
+        }
+
+        @Override
+        public void flush() {
+            if (buffer.size() > 0) {
+                volcarLinea();
+            }
+        }
+
+        private void volcarLinea() {
+            String linea = buffer.toString(StandardCharsets.UTF_8);
+            buffer.reset();
+            consola.append(linea + "\n");
         }
     }
 }

@@ -32,6 +32,14 @@ parser code
             + ". " + s + " no reconocido. valor " + s.value );
     }
 
+    /** Se invoca cuando CUP ya no puede recuperarse del error.
+     *  Por defecto escribe "Couldn't repair and continue parse" por stderr, que
+     *  no llega a la consola del IDE; aca se informa por System.out y se aborta. */
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        System.out.println("Error sintactico: no se pudo recuperar del error; se aborta el analisis.");
+        throw new java.lang.Exception("Analisis sintactico abortado");
+    }
+
     /* ------------------------------------------------------------------
      * Conexion con la tabla de simbolos.
      *
@@ -96,7 +104,12 @@ terminal String ID, CTE_STRING, CTE_E, CTE_F;
 
 /* No terminal inicial */
 non terminal programa, seccion_declaracion, seccion_programa;
-non terminal lista_declaraciones, declaracion, lista_decl, tipo;
+non terminal lista_declaraciones, declaracion;
+/* Listas tipadas: las acciones de CUP necesitan el tipo declarado para poder
+ * llamar a .get(i) / .size() sin castear el Object generico. */
+non terminal java.util.List lista_nombres, lista_tipos;
+/* tipo devuelve un Tipo, no un String: es lo que consume asignarTipo(...). */
+non terminal Tipo tipo;
 non terminal lista_sentencias, sentencia, asignacion, salida, seleccion, iteracion;
 non terminal expresion, termino, factor;
 non terminal condicion, comparacion, op_comparacion;
@@ -121,25 +134,46 @@ lista_declaraciones ::=
         {: System.out.println("lista_declaraciones -> declaracion"); :}
     ;
 
+/* Se declaran los nombres y los tipos en DOS listas separadas y se aparean por
+ * indice al reducir declaracion. No se puede asignar el tipo dentro de
+ * lista_decl: esa no terminal es recursiva a la derecha
+ * (ID COMA lista_decl COMA tipo), asi que el caso base consume el ULTIMO
+ * nombre con el PRIMER tipo y todos los pares quedan invertidos. Ver
+ * docs/tipos-en-tabla-simbolos.md. */
 declaracion ::=
-      CORCHETEA lista_decl CORCHETEC
-        {: System.out.println("declaracion -> CORCHETEA lista_decl CORCHETEC"); :}
+      CORCHETEA lista_nombres:ns CORCHETEC ASIGNACION CORCHETEA lista_tipos:ts CORCHETEC
+        {: System.out.println("declaracion -> CORCHETEA lista_nombres CORCHETEC ASIGNACION CORCHETEA lista_tipos CORCHETEC");
+           if (ns.size() != ts.size()) {
+               System.out.println("Error sintactico: la declaracion tiene " + ns.size()
+                   + " variables pero " + ts.size() + " tipos");
+           } else {
+               for (int i = 0; i < ns.size(); i++) {
+                   parser.asignarTipo((String) ns.get(i), (Tipo) ts.get(i));
+               }
+           } :}
     ;
 
-lista_decl ::=
-      ID CORCHETEC ASIGNACION CORCHETEA tipo
-        {: System.out.println("lista_decl -> ID CORCHETEC ASIGNACION CORCHETEA tipo"); :}
-    | ID COMA lista_decl COMA tipo
-        {: System.out.println("lista_decl -> ID COMA lista_decl COMA tipo"); :}
+lista_nombres ::=
+      lista_nombres:n COMA ID:id
+        {: n.add(id); RESULT = n; :}
+    | ID:id
+        {: RESULT = new ArrayList(); ((java.util.List) RESULT).add(id); :}
+    ;
+
+lista_tipos ::=
+      lista_tipos:t COMA tipo:tp
+        {: t.add(tp); RESULT = t; :}
+    | tipo:tp
+        {: RESULT = new ArrayList(); ((java.util.List) RESULT).add(tp); :}
     ;
 
 tipo ::=
       FLOAT
-        {: System.out.println("tipo -> FLOAT"); :}
+        {: System.out.println("tipo -> FLOAT"); RESULT = Tipo.FLOAT; :}
     | INT
-        {: System.out.println("tipo -> INT"); :}
+        {: System.out.println("tipo -> INT"); RESULT = Tipo.INT; :}
     | STRING
-        {: System.out.println("tipo -> STRING"); :}
+        {: System.out.println("tipo -> STRING"); RESULT = Tipo.STRING; :}
     ;
 
 seccion_programa ::=

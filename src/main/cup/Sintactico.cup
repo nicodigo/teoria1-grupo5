@@ -28,8 +28,7 @@ parser code
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
-        System.out.println("Error sintactico: no se pudo recuperar del error; se aborta el analisis.");
-        throw new java.lang.Exception("Analisis sintactico abortado");
+        throw new java.lang.Exception("No se pudo recuperar del error; se aborta el analisis.");
     }
 
     private TablaSimbolos tablaSimbolos;
@@ -53,10 +52,74 @@ parser code
     public void asignarTipo(String nombre, String tipoTexto) {
         tablaSimbolos.asignarTipo(nombre, Tipo.desdeTexto(tipoTexto));
     }
+
+    public void errorSemantico(String msg) {
+        throw new RuntimeException("Error semantico: " + msg);
+    }
 :}
 
 action code
 {:
+    public void errorSemantico(String msg) {
+        parser.errorSemantico(msg);
+    }
+
+    public void validarNoDeclarada(String id) {
+        if (parser.getTablaSimbolos().obtenerTipo(id) != null) {
+            parser.errorSemantico("Variable ya declarada: '" + id + "'.");
+        }
+    }
+
+    public void procesarDeclaracion(java.util.List nombres, java.util.List tipos) {
+        if (nombres.size() != tipos.size()) {
+            throw new RuntimeException("Error sintactico: la declaracion tiene " + nombres.size()
+                + " variables pero " + tipos.size() + " tipos");
+        }
+        for (int i = 0; i < nombres.size(); i++) {
+            String nombreVar = (String) nombres.get(i);
+            validarNoDeclarada(nombreVar);
+            parser.asignarTipo(nombreVar, (Tipo) tipos.get(i));
+        }
+    }
+
+    public void validarAsignacionString(String id) {
+        Tipo tipo = parser.getTablaSimbolos().obtenerTipo(id);
+        if (tipo == null) {
+            parser.errorSemantico("Variable no declarada: '" + id + "'.");
+        } else if (tipo != Tipo.STRING) {
+            parser.errorSemantico("Tipos incompatibles: '" + id + "' es " + tipo + " y no puede recibir un STRING.");
+        }
+    }
+
+    public void validarAsignacionNumerica(String id) {
+        Tipo tipo = parser.getTablaSimbolos().obtenerTipo(id);
+        if (tipo == null) {
+            parser.errorSemantico("Variable no declarada: '" + id + "'.");
+        } else if (tipo == Tipo.STRING) {
+            parser.errorSemantico("Tipos incompatibles: '" + id + "' es STRING y no puede recibir una expresion numerica.");
+        }
+    }
+
+    public void validarVariableNumerica(String id, String contexto) {
+        Tipo tipo = parser.getTablaSimbolos().obtenerTipo(id);
+        if (tipo == null) {
+            parser.errorSemantico("Variable no declarada en " + contexto + ": '" + id + "'.");
+        } else if (tipo == Tipo.STRING) {
+            parser.errorSemantico("La variable '" + id + "' en " + contexto + " debe ser numerica.");
+        }
+    }
+
+    public void validarPivotSumaimpar(String cte) {
+        if (Integer.parseInt(cte) < 1) {
+            parser.errorSemantico("El pivot de SUMAIMPAR debe ser >= 1 (se recibio " + cte + ").");
+        }
+    }
+
+    public void validarEnteroPositivo(String cte) {
+        if (Integer.parseInt(cte) <= 0) {
+            parser.errorSemantico("La lista de SUMAIMPAR solo admite enteros positivos (se recibio " + cte + ").");
+        }
+    }
 :}
 
 
@@ -112,14 +175,7 @@ lista_declaraciones ::=
 declaracion ::=
       CORCHETEA lista_nombres:ns CORCHETEC ASIGNACION CORCHETEA lista_tipos:ts CORCHETEC
         {: System.out.println("declaracion -> CORCHETEA lista_nombres CORCHETEC ASIGNACION CORCHETEA lista_tipos CORCHETEC");
-           if (ns.size() != ts.size()) {
-               System.out.println("Error sintactico: la declaracion tiene " + ns.size()
-                   + " variables pero " + ts.size() + " tipos");
-           } else {
-               for (int i = 0; i < ns.size(); i++) {
-                   parser.asignarTipo((String) ns.get(i), (Tipo) ts.get(i));
-               }
-           } :}
+           procesarDeclaracion(ns, ts); :}
     ;
 
 lista_nombres ::=
@@ -169,10 +225,12 @@ sentencia ::=
     ;
 
 asignacion ::=
-      ID ASIGNACION expresion
-        {: System.out.println("asignacion -> ID ASIGNACION expresion"); :}
-    | ID ASIGNACION CTE_STRING
-        {: System.out.println("asignacion -> ID ASIGNACION CTE_STRING"); :}
+      ID:id ASIGNACION expresion
+        {: System.out.println("asignacion -> ID ASIGNACION expresion");
+           validarAsignacionNumerica(id); :}
+    | ID:id ASIGNACION CTE_STRING
+        {: System.out.println("asignacion -> ID ASIGNACION CTE_STRING");
+           validarAsignacionString(id); :}
     ;
 
 expresion ::=
@@ -194,8 +252,9 @@ termino ::=
     ;
 
 factor ::=
-      ID
-        {: System.out.println("factor -> ID"); :}
+      ID:id
+        {: System.out.println("factor -> ID");
+           validarVariableNumerica(id, "expresion"); :}
     | CTE_E
         {: System.out.println("factor -> CTE_E"); :}
     | CTE_F
@@ -207,8 +266,9 @@ factor ::=
     ;
 
 salida ::=
-      WRITE ID
-        {: System.out.println("salida -> WRITE ID"); :}
+      WRITE ID:id
+        {: System.out.println("salida -> WRITE ID");
+           validarVariableNumerica(id, "WRITE"); :}
     | WRITE CTE_STRING
         {: System.out.println("salida -> WRITE CTE_STRING"); :}
     | WRITE CTE_E
@@ -259,8 +319,9 @@ op_comparacion ::=
     ;
 
 sumaimpar ::=
-      SUMAIMPAR PARA CTE_E PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC
-        {: System.out.println("sumaimpar -> SUMAIMPAR PARA CTE_E PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC"); :}
+      SUMAIMPAR PARA CTE_E:cte PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC
+        {: System.out.println("sumaimpar -> SUMAIMPAR PARA CTE_E PUNTOYCOMA CORCHETEA lista_constantes CORCHETEC PARC");
+           validarPivotSumaimpar(cte); :}
     ;
 
 lista_constantes ::=
@@ -271,9 +332,11 @@ lista_constantes ::=
     ;
 
 lista_enteros ::=
-      lista_enteros COMA CTE_E
-        {: System.out.println("lista_enteros -> lista_enteros COMA CTE_E"); :}
-    | CTE_E
-        {: System.out.println("lista_enteros -> CTE_E"); :}
+      lista_enteros COMA CTE_E:cte
+        {: System.out.println("lista_enteros -> lista_enteros COMA CTE_E");
+           validarEnteroPositivo(cte); :}
+    | CTE_E:cte
+        {: System.out.println("lista_enteros -> CTE_E");
+           validarEnteroPositivo(cte); :}
     ;
 

@@ -16,6 +16,15 @@ public class TablaSimbolos implements Iterable<EntradaTS> {
     }
 
     /**
+     * Obtiene el tipo asignado a un simbolo en la tabla, o {@code null} si
+     * no existe o aun no tiene tipo asignado.
+     */
+    public Tipo obtenerTipo(String nombre) {
+        EntradaTS entrada = buscar(nombre);
+        return entrada != null ? entrada.getTipo() : null;
+    }
+
+    /**
      * Asigna el tipo a una variable ya registrada por el analizador lexico.
      * Si la entrada no existe, no la crea: el tipo solo completa un simbolo
      * previamente insertado. El orden de insercion se conserva porque

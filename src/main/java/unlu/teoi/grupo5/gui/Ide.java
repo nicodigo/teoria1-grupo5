@@ -261,8 +261,17 @@ public class Ide extends JFrame {
         } catch (Exception e) {
             exito = false;
             this.consola.setColor(new Color(255, 0, 0));
-            this.consola.append("\n[ERROR SINTACTICO] " + e.getMessage() + "\n");
-            this.statusBar.setText(" Estado: Error Sintactico detectado - Compilacion interrumpida");
+            String msg = e.getMessage() != null ? e.getMessage() : "";
+            if (msg.startsWith("Error semantico: ")) {
+                this.consola.append("\n[ERROR SEMANTICO] " + msg.substring("Error semantico: ".length()) + "\n");
+                this.statusBar.setText(" Estado: Error Semantico detectado - Compilacion interrumpida");
+            } else if (msg.startsWith("Error sintactico: ")) {
+                this.consola.append("\n[ERROR SINTACTICO] " + msg.substring("Error sintactico: ".length()) + "\n");
+                this.statusBar.setText(" Estado: Error Sintactico detectado - Compilacion interrumpida");
+            } else {
+                this.consola.append("\n[ERROR SINTACTICO] " + msg + "\n");
+                this.statusBar.setText(" Estado: Error Sintactico detectado - Compilacion interrumpida");
+            }
         } finally {
             salidaConsola.flush();
             System.setOut(salidaOriginal);

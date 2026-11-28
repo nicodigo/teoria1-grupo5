@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
@@ -116,18 +117,141 @@ class TablaSimbolosTest {
     }
 
     @Test
-    void unaDeclaracionDesbalanceadaNoAsignaTipos() throws Exception {
+    void obtenerTipoDevuelveElTipoOCorrespondienteNull() {
+        TablaSimbolos ts = new TablaSimbolos();
+        ts.insertar(new EntradaTS("a", "ID", null, null, -1));
+        assertNull(ts.obtenerTipo("a"));
+        assertNull(ts.obtenerTipo("inexistente"));
+
+        ts.asignarTipo("a", Tipo.INT);
+        assertEquals(Tipo.INT, ts.obtenerTipo("a"));
+    }
+
+    @Test
+    void unaDeclaracionDesbalanceadaLanzaErrorSintactico() {
         String fuente = "DECLARE.SECTION\n"
                 + "    [a, b] ::= [INT]\n"
                 + "ENDDECLARE.SECTION\n"
                 + "PROGRAM.SECTION\n"
-                + "    a ::= 1;\n"
+                + "    WRITE 1;\n"
                 + "ENDPROGRAM.SECTION\n";
 
-        TablaSimbolos ts = parsear(fuente);
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("la declaracion tiene 2 variables pero 1 tipos"));
+    }
 
-        assertNull(ts.buscar("a").getTipo());
-        assertNull(ts.buscar("b").getTipo());
+    @Test
+    void programaCompletoPruebaTxtCompilaSinErrores() throws Exception {
+        String fuente = java.nio.file.Files.readString(java.nio.file.Path.of("docs/entrega2/prueba.txt"));
+        TablaSimbolos ts = parsear(fuente);
+        assertTrue(ts.contiene("a"));
+        assertTrue(ts.contiene("resultado"));
+    }
+
+    @Test
+    void variableYaDeclaradaLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a] ::= [INT]\n"
+                + "    [a] ::= [FLOAT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    WRITE 1;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("Variable ya declarada: 'a'"));
+    }
+
+    @Test
+    void variableNoDeclaradaLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    b ::= 1;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("Variable no declarada: 'b'"));
+    }
+
+    @Test
+    void asignarStringAVariableNumericaLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    a ::= \"hola\";\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("Tipos incompatibles"));
+    }
+
+    @Test
+    void asignarExpresionNumericaAVariableStringLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [s] ::= [STRING]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    s ::= 10;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("Tipos incompatibles"));
+    }
+
+    @Test
+    void operacionAritmeticaConVariableStringLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [s] ::= [STRING]\n"
+                + "    [b] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    b ::= s + 1;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("debe ser numerica"));
+    }
+
+    @Test
+    void writeConVariableStringLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [s] ::= [STRING]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    WRITE s;\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("debe ser numerica"));
+    }
+
+    @Test
+    void pivotSumaimparMenorAUnoLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    a ::= SUMAIMPAR(0; [1, 3]);\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("pivot de SUMAIMPAR debe ser >= 1"));
+    }
+
+    @Test
+    void sumaimparConEnteroNoPositivoLanzaErrorSemantico() {
+        String fuente = "DECLARE.SECTION\n"
+                + "    [a] ::= [INT]\n"
+                + "ENDDECLARE.SECTION\n"
+                + "PROGRAM.SECTION\n"
+                + "    a ::= SUMAIMPAR(2; [0, 3]);\n"
+                + "ENDPROGRAM.SECTION\n";
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> parsear(fuente));
+        assertTrue(ex.getMessage().contains("solo admite enteros positivos"));
     }
 
     private static TablaSimbolos parsear(String fuente) throws Exception {

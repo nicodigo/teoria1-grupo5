@@ -44,26 +44,26 @@ PROGRAM.SECTION
 
     //* --- IF / ELSE con cada operador relacional *//
     IF (a >= 1) {
-        WRITE("mayor o igual");
+        WRITE "mayor o igual";
     } ELSE {
-        WRITE("menor");
+        WRITE "menor";
     }
 
     IF (a <= b) {
-        WRITE("menor o igual");
+        WRITE "menor o igual";
     }
 
     IF (a != b) {
-        WRITE("distinto");
+        WRITE "distinto";
     }
 
     IF (a < b) {
-        WRITE("menor estricto");
+        WRITE "menor estricto";
     }
 
     //* --- Un unico conector logico por condicion *//
     IF (a > 0 AND b > 0) {
-        WRITE("ambos positivos");
+        WRITE "ambos positivos";
     }
 
     WHILE (a < 10 OR b < 10) {
@@ -87,7 +87,7 @@ PROGRAM.SECTION
     //* Caso con variable como elemento de la lista *//
     resultado ::= SUMAIMPAR(2; [a, 7, 9]);
 
-    WRITE(resultado);
+    WRITE resultado;
 
 ENDPROGRAM.SECTION
 

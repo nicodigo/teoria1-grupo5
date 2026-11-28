@@ -241,8 +241,6 @@ public class Ide extends JFrame {
         this.analizadorLexico = new AnalizadorLexico(new Lexico(new StringReader(codigo)), tablaSimbolos);
         this.parserSintactico = new Parser(this.analizadorLexico, tablaSimbolos);
 
-        // Las acciones de Sintactico.cup imprimen las reglas con System.out; se
-        // redirige a la consola del IDE mientras dura el analisis sintactico.
         PrintStream salidaOriginal = System.out;
         PrintStream salidaConsola = new PrintStream(new ConsolaOutputStream(), true, StandardCharsets.UTF_8);
         System.setOut(salidaConsola);
@@ -250,11 +248,8 @@ public class Ide extends JFrame {
         this.consola.append("--- ANALISIS SINTACTICO ---\n");
         boolean exito = true;
         try {
-            // El parser consume el lexico a traves del adaptador: no hay que
-            // recorrer los tokens antes, o el parser arrancaria en EOF.
             this.parserSintactico.parse();
         } catch (Error e) {
-            // Errores lexicos que Lexico.flex lanza al validar constantes.
             exito = false;
             this.consola.setColor(new Color(255, 0, 0));
             String msg = e.getMessage();
@@ -264,7 +259,6 @@ public class Ide extends JFrame {
             this.consola.append("\n[ERROR LEXICO] " + msg + "\n");
             this.statusBar.setText(" Estado: Error Lexico detectado - Compilacion interrumpida");
         } catch (Exception e) {
-            // Errores sintacticos: CUP no puede recuperarse del primer error.
             exito = false;
             this.consola.setColor(new Color(255, 0, 0));
             this.consola.append("\n[ERROR SINTACTICO] " + e.getMessage() + "\n");
@@ -275,8 +269,6 @@ public class Ide extends JFrame {
         }
 
         if (!exito) {
-            // Igual criterio que con los errores lexicos: si la compilacion se
-            // interrumpe, no se sobreescribe el ts.txt de la entrega.
             return;
         }
 
@@ -288,7 +280,6 @@ public class Ide extends JFrame {
         this.consola.append("\n--- TABLA DE SIMBOLOS ---\n");
         this.consola.append(stringTabla);
 
-        // Autoguardado en docs/entrega2/ts.txt (la carpeta se crea si no existe)
         try {
             Files.createDirectories(DIRECTORIO_ENTREGA);
             Files.write(DIRECTORIO_ENTREGA.resolve("ts.txt"), stringTabla.getBytes(StandardCharsets.UTF_8));
@@ -300,10 +291,6 @@ public class Ide extends JFrame {
         }
     }
 
-    /**
-     * Vuelca en el panel de salida lo que el parser escribe en {@code System.out}.
-     * Acumula bytes hasta el salto de linea para no cortar una regla al medio.
-     */
     private final class ConsolaOutputStream extends OutputStream {
 
         private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();

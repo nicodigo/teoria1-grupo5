@@ -17,10 +17,6 @@ import unlu.teoi.grupo5.lexer.Lexico;
 import unlu.teoi.grupo5.parser.Parser;
 import unlu.teoi.grupo5.parser.sym;
 
-/**
- * Valida la infraestructura de la columna TIPO antes de que exista la
- * gramatica: la tabla acepta tipos del parser y el writer los imprime.
- */
 class TablaSimbolosTest {
 
     @Test
@@ -36,7 +32,6 @@ class TablaSimbolosTest {
         for (EntradaTS entrada : ts) {
             nombres.add(entrada.getNombre());
         }
-        // El orden de aparicion en el programa no cambia al asignar el tipo.
         assertEquals(List.of("a1", "b1", "x"), nombres);
         assertEquals(Tipo.INT, ts.buscar("b1").getTipo());
         assertNull(ts.buscar("a1").getTipo());
@@ -85,7 +80,6 @@ class TablaSimbolosTest {
         assertSame(ts, parser.getTablaSimbolos());
 
         while (adaptador.next_token().sym != sym.EOF) {
-            // la gramatica todavia es vacia: solo se consume el lexico
         }
         assertTrue(ts.contiene("a1"));
         assertEquals("ID", ts.buscar("a1").getToken());
@@ -98,7 +92,6 @@ class TablaSimbolosTest {
         Parser parser = new Parser(adaptador, ts);
         ts.insertar(new EntradaTS("a1", "ID", null, null, -1));
 
-        // Lo que usara la gramatica de DECLARE.SECTION.
         parser.asignarTipo("a1", Tipo.FLOAT);
         assertEquals(Tipo.FLOAT, ts.buscar("a1").getTipo());
 
@@ -108,8 +101,6 @@ class TablaSimbolosTest {
 
     @Test
     void laGramaticaAsignaCadaTipoALaVariableQueLeCorresponde() throws Exception {
-        // Tipos distintos a proposito: con listas homogeneas un pareo invertido
-        // pasaria inadvertido.
         String fuente = "DECLARE.SECTION\n"
                 + "    [a, b, c] ::= [INT, FLOAT, STRING]\n"
                 + "ENDDECLARE.SECTION\n"
@@ -139,10 +130,6 @@ class TablaSimbolosTest {
         assertNull(ts.buscar("b").getTipo());
     }
 
-    /**
-     * Parsea con las trazas de la gramatica silenciadas, para no ensuciar la
-     * salida de los tests con las reglas que imprime Sintactico.cup.
-     */
     private static TablaSimbolos parsear(String fuente) throws Exception {
         TablaSimbolos ts = new TablaSimbolos();
         Parser parser = new Parser(new AnalizadorLexico(new Lexico(new StringReader(fuente)), ts), ts);

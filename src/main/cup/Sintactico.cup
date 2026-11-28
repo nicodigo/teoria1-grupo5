@@ -10,9 +10,7 @@
 // El código generado NO se versiona ni se edita: se edita este .cup y se
 // recompila (./mvnw verify).
 //
-// TODO: reemplazar este esqueleto por la gramática de la entrega 2
-// (DECLARE.SECTION / PROGRAM.SECTION, asignaciones, IF/WHILE, salida,
-// SUMAIMPAR, etc.). Al escribir la gramática, mantener los terminales en
+// Al escribir la gramática, mantener los terminales en
 // sincronía con los tokens que devuelva Lexico.flex.
 // ============================================================================
 
@@ -24,34 +22,16 @@ import unlu.teoi.grupo5.tablasimbolos.Tipo;
 
 parser code
 {:
-    /** Metodo al que se llama automaticamente ante algun error sintactico.
-     *  OJO: en CUP, Symbol.left es la linea y Symbol.right la columna (ambas
-     *  base 0, porque Lexico.flex pasa yyline/yycolumn). */
     public void syntax_error(Symbol s){
         System.out.println("Error en la linea " + (s.left + 1) + " columna " + (s.right + 1)
             + ". " + s + " no reconocido. valor " + s.value );
     }
 
-    /** Se invoca cuando CUP ya no puede recuperarse del error.
-     *  Por defecto escribe "Couldn't repair and continue parse" por stderr, que
-     *  no llega a la consola del IDE; aca se informa por System.out y se aborta. */
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
         System.out.println("Error sintactico: no se pudo recuperar del error; se aborta el analisis.");
         throw new java.lang.Exception("Analisis sintactico abortado");
     }
 
-    /* ------------------------------------------------------------------
-     * Conexion con la tabla de simbolos.
-     *
-     * CUP 0.11b exige que el bloque parser code vaya ANTES de los terminal /
-     * non terminal, y admite uno solo: un segundo bloque se descarta con el
-     * warning "Redundant parser code (skipping)". Por eso la tabla, el
-     * constructor y asignarTipo() viven aca, junto a syntax_error.
-     *
-     * La tabla la crea la GUI una vez por compilacion y la comparten el lexer
-     * (registra simbolos) y el parser (asigna el TIPO al reducir las
-     * declaraciones). La gramatica solo tiene que llamar a asignarTipo(...).
-     * ------------------------------------------------------------------*/
     private TablaSimbolos tablaSimbolos;
 
     public Parser(java_cup.runtime.Scanner scanner, TablaSimbolos tablaSimbolos) {
@@ -66,12 +46,10 @@ parser code
         return tablaSimbolos;
     }
 
-    /** Asigna el tipo a una variable ya registrada por el lexico. */
     public void asignarTipo(String nombre, Tipo tipo) {
         tablaSimbolos.asignarTipo(nombre, tipo);
     }
 
-    /** Igual que el anterior, aceptando el texto del token ("INT", "FLOAT", "STRING"). */
     public void asignarTipo(String nombre, String tipoTexto) {
         tablaSimbolos.asignarTipo(nombre, Tipo.desdeTexto(tipoTexto));
     }
@@ -105,10 +83,7 @@ terminal String ID, CTE_STRING, CTE_E, CTE_F;
 /* No terminal inicial */
 non terminal programa, seccion_declaracion, seccion_programa;
 non terminal lista_declaraciones, declaracion;
-/* Listas tipadas: las acciones de CUP necesitan el tipo declarado para poder
- * llamar a .get(i) / .size() sin castear el Object generico. */
 non terminal java.util.List lista_nombres, lista_tipos;
-/* tipo devuelve un Tipo, no un String: es lo que consume asignarTipo(...). */
 non terminal Tipo tipo;
 non terminal lista_sentencias, sentencia, asignacion, salida, seleccion, iteracion;
 non terminal expresion, termino, factor;
@@ -134,12 +109,6 @@ lista_declaraciones ::=
         {: System.out.println("lista_declaraciones -> declaracion"); :}
     ;
 
-/* Se declaran los nombres y los tipos en DOS listas separadas y se aparean por
- * indice al reducir declaracion. No se puede asignar el tipo dentro de
- * lista_decl: esa no terminal es recursiva a la derecha
- * (ID COMA lista_decl COMA tipo), asi que el caso base consume el ULTIMO
- * nombre con el PRIMER tipo y todos los pares quedan invertidos. Ver
- * docs/tipos-en-tabla-simbolos.md. */
 declaracion ::=
       CORCHETEA lista_nombres:ns CORCHETEC ASIGNACION CORCHETEA lista_tipos:ts CORCHETEC
         {: System.out.println("declaracion -> CORCHETEA lista_nombres CORCHETEC ASIGNACION CORCHETEA lista_tipos CORCHETEC");
